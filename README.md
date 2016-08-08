@@ -4,7 +4,7 @@ Version 0.0.
 Patch for CAMB (http://camb.info) that computes CMB anisotropies sourced by Primordial Magnetic Fields (PMF)
 
 - based on CAMB 2015
-- part of the code is based on a "Magnetic CAMB" version by Richard Shaw, provided by personal communication
+- part of the code is based on a "Magnetic CAMB" version by Richard Shaw, provided by private communication
 
 INSTALL: 
 - Copy-paste the files in your CAMB directory 
