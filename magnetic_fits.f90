@@ -295,8 +295,8 @@ contains
 ! any sense otherwise)
     DoTensorNeutrinos = .true.
 
-!AZ: Set tensor_parameterization = 1.
-    CP%InitPower%tensor_parameterization = 1
+!AZ: Set tensor_parameterization = 3.
+    CP%InitPower%tensor_parameterization = 3
 
      if(magmode == mag_passive) then
        CP%WantTensors = .true.!YUN
