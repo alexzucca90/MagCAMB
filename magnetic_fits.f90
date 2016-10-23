@@ -180,9 +180,7 @@ contains
       call CAMB_TransfersToPowers(data)
 
    else
-      ! Just call getresults
       call CAMB_GetResults(tcp, error)
-    !Print *, "In cls_from_params :", error!, tcp
    end if
    !check
    if(error /= 0) then
@@ -193,20 +191,13 @@ contains
 
    ! Copy out Cls into the return array.
    if(CP%WantScalars) then
-      ! do l = lmin, CP%Max_l
+
       if(CP%DoLensing) then
          Cls(lmin:CP%Max_l,C_Temp:C_last) =  Cl_lensed(lmin:CP%Max_l,1, C_Temp:C_last)
       else 
          Cls(lmin:CP%Max_l,C_Temp:C_last) =  Cl_scalar(lmin:CP%Max_l,1, C_Temp:C_last)
-       !abs(Cl_scalar(lmin:CP%Max_l,1, C_Temp:C_last))
-        ! print*, Cls(lmin:CP%Max_l,C_Temp:C_last)
-         !print*, Cl_scalar(lmin:CP%Max_l,1, C_Temp:C_last) !yun
       end if
-      !yun ,check
-        !print*, "scalar Cls :"
-        !pause
-        !print*, Cl_scalar(lmin:CP%Max_l,1, C_Temp:C_last)
-      !end do
+
    else if(CP%WantTensors) then
       do l = 2, CP%Max_l_tensor
          Cls(l,1:4) = Cl_tensor(l,1, TensClOrder(1:4))
@@ -265,10 +256,6 @@ contains
     (2*pi)**((magind+3)/(magind+5))*(CP%H0/100)**(1/(magind+5))&
     *((CP%omegab*(CP%H0/100)**2)/0.022)**(1/(magind+5))
 
-    !write(*,*) 'kDissip = ', kDissip, ' Mpc^-1'
-!this I can neglect from now...
-    !Magnetic_Index = magind
-    !write(*,*) "Magnetic_index = ", Magnetic_Index
 
 
     ! Set common power spectrum stuff
@@ -308,9 +295,6 @@ contains
             if(Feedbacklevel>1) write(*,*) "USING INTERPOLATION TABLE"
             CP%InitPower%ant(1) = 2._dl*(3 + magind)
             CP%InitPower%TensorPowerAmp(1) = mag_psamp(magind, magamp, 5) * (6._dl*Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2!yun
-            !amp = mag_psamp(magind, magamp, 5) * (3._dl*Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2 !yun, check
-            !print*, CP%InitPower%TensorPowerAmp(1)
-            !CP%InitPower%ant(1) = camb_ind
             CP%InitPower%CorrType = 0
         else if (magind .ge. -1.5) then
             !Use first fitting formula
@@ -320,7 +304,7 @@ contains
             CP%InitPower%CorrType = 5
         end if
 
-!ALEX: I must use the fitting functions even for this..
+!AZ: I must use the fitting functions even for this..
      else if(magmode == mag_compensated) then
        CP%WantTensors = .true.!YUN
        delb = 0._dl ! Set up perturbations
@@ -345,14 +329,12 @@ contains
           ! the cross correlation), and then sums them up.
           
           ! Set up common parameters
-          !camb_ind = 1._dl + 2._dl*(3 + magind)
+
           CP%Scalar_initial_condition = 6
           CP%WantScalars = .true.
-          !CP%InitPower%an(1) = camb_ind
-          !yun
+
 !Delta-Delta
-          !! The density perturbed mode (delb = 1, pib = 0)
-          !CP%InitPower%ScalarPowerAmp(1)= mag_psamp(magind, magamp, 1) - mag_psamp(magind, magamp, 2)
+
           if(magind .ge. -1.5) then
                 CP%InitPower%an(1) =  magind
                 CP%InitPower%CorrType = 1
@@ -369,11 +351,10 @@ contains
            ! Cltemp = 0.
           call cls_from_params(CP,Cltemp2,ud)
           Cltemp(:,:) = Cltemp(:,:) + Cltemp2(:,:)
-          !print*, Cltemp(lmin:CP%Max_l, C_Temp:C_last)!, CP, ud!yun
+
 
 !Pi-Pi
-          !! The stress perturbed mode (delb = 0, pib = 1)
-          !CP%InitPower%ScalarPowerAmp(1)= mag_psamp(magind, magamp, 3) - mag_psamp(magind, magamp, 2)
+
           if(magind .ge. -1.5) then
                 CP%InitPower%CorrType = 2
                 write(*,*) "Using FITTING Functions"!mag_amplitude(magind, magamp)* psconst(
@@ -388,8 +369,7 @@ contains
           call cls_from_params(CP,Cltemp2,ud)
           Cltemp(:,:) = Cltemp(:,:) + Cltemp2(:,:)
 !Delta-Pi
-          !! The combined perturbation (delb = 1, pib = 1) !yun, 2*mag_psamp(magind, magamp, 2)
-          !CP%InitPower%ScalarPowerAmp(1)= mag_psamp(magind, magamp, 2)
+
           if(magind .ge. -1.5) then
                 CP%InitPower%CorrType = 3
                 write(*,*) "Using FITTING Functions"
@@ -403,41 +383,38 @@ contains
           pib = 1._dl
           call cls_from_params(CP,Cltemp2,ud)
           Cltemp(:,:) = Cltemp(:,:) + Cltemp2(:,:)
-!pause
+
           write (*,*) "End"
           ! Copy back into Cl_scalar array
           Cl_scalar(lmin:CP%Max_l, 1, C_Temp:C_last) = Cltemp(lmin:CP%Max_l, C_Temp:C_last)
-          !print*, Cl_scalar(lmin:CP%Max_l, 1, C_Temp:C_last)!Cltemp(lmin:CP%Max_l, C_Temp:C_last)
-          ! Reset the Alfven velocity related stuff
+
           call mag_reset_alfven
 
           return
 
        else if(magmode == mag_passive) then
-          !amp = mag_psamp(magind, magamp, 3) * (Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2
-          !camb_ind = 1._dl + 2._dl*(3 + magind)
+
           CP%Scalar_initial_condition = 1
-          
-          
-          delb = 0._dl ! Set up perturbations
+          ! Set up perturbations
+          delb = 0._dl
           pib = 0._dl
           
           CP%WantScalars = .true.
-        if(magind.ge.-1.5) then
-            if (Feedbacklevel>1) write(*,*) "Using FITTING FUNCTIONS"
-                CP%InitPower%an(1) = magind
-                CP%InitPower%CorrType = 5
-                CP%InitPower%ScalarPowerAmp(1)=mag_amplitude(magind, magamp)*psconst(3)*&
+          if(magind.ge.-1.5) then
+             if (Feedbacklevel>1) write(*,*) "Using FITTING FUNCTIONS"
+                 CP%InitPower%an(1) = magind
+                 CP%InitPower%CorrType = 5
+                 CP%InitPower%ScalarPowerAmp(1)=mag_amplitude(magind, magamp)*psconst(3)*&
                                             (Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2
 
-        else
-          if (Feedbacklevel>1) write(*,*) "Using INTERPOLATION TABLE"
-          CP%InitPower%an(1) = 1._dl + 2._dl*(3 + magind)
-          CP%InitPower%ScalarPowerAmp(1)= mag_psamp(magind, magamp, 3) * (Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2
-          CP%InitPower%CorrType = 0
-        end if
+             else
+               if (Feedbacklevel>1) write(*,*) "Using INTERPOLATION TABLE"
+               CP%InitPower%an(1) = 1._dl + 2._dl*(3 + magind)
+               CP%InitPower%ScalarPowerAmp(1)= mag_psamp(magind, magamp, 3) * (Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2
+               CP%InitPower%CorrType = 0
+            end if
 
-       end if
+         end if
 
     else if(CP%WantVectors) then 
 
@@ -446,17 +423,11 @@ contains
             if(magind .ge. -1.5d0) then
                 if (Feedbacklevel>1) write(*,*) "USING FITTING FUNCTION"
                 CP%InitPower%CorrType = 4 !VECTOR
-                !CP%InitPower%an(1) = magind
-                !amp = mag_amplitude(magind, magamp)* psconst(4)
-                !write(*,*)
                 CP%InitPower%ScalarPowerAmp(1)= mag_amplitude(magind, magamp)* psconst(4)
                 CP%InitPower%an(1) = magind
-                !write(*,*) "P.S. Amplitude: ", amp
             else
                 if (Feedbacklevel>1) write(*,*) "Using Table for integrals"
-                CP%InitPower%CorrType = 0 ! use the approximated results.
-                !amp = mag_psamp(magind, magamp, 4)
-                !camb_ind = 1._dl + 2._dl*(3 + magind)
+                CP%InitPower%CorrType = 0
                 CP%InitPower%an(1) = 1._dl + 2._dl*(3 + magind)
                 CP%InitPower%ScalarPowerAmp(1)= mag_psamp(magind, magamp, 4)
             end if
@@ -468,7 +439,7 @@ contains
           write (*,*) "There are no passive vector modes."
           return
        end if
-    end if       !yun
+    end if
 
 
 
