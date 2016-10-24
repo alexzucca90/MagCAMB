@@ -1,82 +1,55 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="MagCAMB : Patch for CAMB to compute CMB anisotropies sourced by Primordial Magnetic Fields (PMF)">
-
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>MagCAMB</title>
-  </head>
-
-  <body>
-
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/alexzucca90/MagCAMB">View on GitHub</a>
-
-          <h1 id="project_title">MagCAMB</h1>
-          <h2 id="project_tagline">CMB anisotropies from Primordial Magnetic Fields</h2>
-         
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/alexzucca90/MagCAMB/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/alexzucca90/MagCAMB/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h1>
-<a id="magcamb" class="anchor" href="#magcamb" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>MagCAMB</h1>
-
-<p>By <a href="https://www.sfu.ca/physics/people/profiles/azucca.html">A. Zucca</a>, <a href = "https://www.sfu.ca/physics/people/profiles/yla289.html">Y. Li</a> and <a href = "http://www.sfu.ca/~levon/">L.Pogosian</a></p>       
-        
-<p>Version 0.0.</p>
-
-<p>Patch for CAMB (<a href="http://camb.info">http://camb.info</a>) that computes CMB anisotropies sourced by Primordial Magnetic Fields (PMF)</p>
-
-<ul>
-<li>based on CAMB 2015</li>
-<li>integrated with CosmoMC (soon available)</li>
-<li>part of the code is based on a "Magnetic CAMB" version written by Richard Shaw, provided by private communication</li>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>MagCAMB</title>
+  <meta name="Description" content="MagCAMB : Patch for CAMB to compute CMB anisotropies sourced by Primordial Magnetic Fields (PMF)">
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1404.47">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 14.0px; font: 12.0px Times; color: #0000ee; -webkit-text-stroke: #0000ee}
+    p.p4 {margin: 0.0px 0.0px 12.0px 0.0px; line-height: 14.0px; font: 12.0px Times; color: #0000ee; -webkit-text-stroke: #0000ee}
+    p.p5 {margin: 0.0px 0.0px 12.0px 0.0px; line-height: 14.0px; font: 12.0px Times; color: #000000; -webkit-text-stroke: #000000}
+    li.li6 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 14.0px; font: 12.0px Times; color: #000000; -webkit-text-stroke: #000000}
+    span.s1 {text-decoration: underline ; font-kerning: none}
+    span.s2 {font-kerning: none}
+    span.s3 {font-kerning: none; color: #000000; -webkit-text-stroke: 0px #000000}
+    span.s4 {text-decoration: underline ; font-kerning: none; color: #0000ee; -webkit-text-stroke: 0px #0000ee}
+    span.s5 {font: 12.0px Times; text-decoration: underline ; font-kerning: none; color: #0000ee; -webkit-text-stroke: 0px #0000ee}
+    span.s6 {-webkit-text-stroke: 0px #000000}
+    span.s7 {font-kerning: none; color: #000000}
+    ul.ul1 {list-style-type: disc}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1"><a href="https://github.com/alexzucca90/MagCAMB">View on GitHub</a></span></p>
+<h1 style="margin: 0.0px 0.0px 16.1px 0.0px; line-height: 28.0px; font: 24.0px Times; color: #000000; -webkit-text-stroke: #000000"><span class="s2"><b>MagCAMB</b></span></h1>
+<h2 style="margin: 0.0px 0.0px 14.9px 0.0px; line-height: 22.0px; font: 18.0px Times; color: #000000; -webkit-text-stroke: #000000"><span class="s2"><b>CMB anisotropies from Primordial Magnetic Fields</b></span></h2>
+<p class="p1"><span class="s1"><a href="https://github.com/alexzucca90/MagCAMB/zipball/master">Download this project as a .zip file</a></span><span class="s3"> <a href="https://github.com/alexzucca90/MagCAMB/tarball/master"><span class="s4">Download this project as a tar.gz file</span></a><span class="Apple-converted-space"> </span></span></p>
+<h1 style="margin: 0.0px 0.0px 14.9px 0.0px; line-height: 22.0px; font: 18.0px Times; color: #000000; -webkit-text-stroke: #000000"><span class="s2"><b>MagCAMB</b></span></h1>
+<p class="p4"><span class="s3">By <a href="https://www.sfu.ca/physics/people/profiles/azucca.html"><span class="s4">A. Zucca</span></a>, <a href="https://www.sfu.ca/physics/people/profiles/yla289.html"><span class="s4">Y. Li</span></a> and <a href="http://www.sfu.ca/~levon/"><span class="s4">L.Pogosian</span></a></span></p>
+<p class="p5"><span class="s2">Version 0.0.</span></p>
+<p class="p5"><span class="s2">Patch for CAMB (<a href="http://camb.info/"><span class="s5">http://camb.info</span></a>) that computes CMB anisotropies sourced by Primordial Magnetic Fields (PMF)</span></p>
+<ul class="ul1">
+  <li class="li6"><span class="s6"></span><span class="s2">based on CAMB 2015</span></li>
+  <li class="li6"><span class="s6"></span><span class="s2">integrated with CosmoMC (available soon)</span></li>
+  <li class="li6"><span class="s6"></span><span class="s2">part of the code is based on the version of "Magnetic CAMB" written by Richard Shaw, provided by private communication</span></li>
 </ul>
-
-<p>INSTALL: </p>
-
-<ul>
-<li>Copy-paste the files in your CAMB directory </li>
-<li>make</li>
+<p class="p5"><span class="s2">INSTALL:<span class="Apple-converted-space"> </span></span></p>
+<ul class="ul1">
+  <li class="li6"><span class="s6"></span><span class="s2">Copy-paste the files in your CAMB directory<span class="Apple-converted-space"> </span></span></li>
+  <li class="li6"><span class="s6"></span><span class="s2">make</span></li>
 </ul>
-
-<p>RUN:</p>
-
-<ul>
-<li>modify params_mag.ini according to what you want to calculate </li>
-<li>./camb params_mag.ini</li>
+<p class="p5"><span class="s2">RUN:</span></p>
+<ul class="ul1">
+  <li class="li6"><span class="s6"></span><span class="s2">modify params_mag.ini according to what you want to calculate<span class="Apple-converted-space"> </span></span></li>
+  <li class="li6"><span class="s6"></span><span class="s2">./camb params_mag.ini</span></li>
 </ul>
-
-<p>If you use this code for a scientific work, please cite CAMB original paper, <a href="http://arxiv.org/abs/astro-ph/9911177">http://arxiv.org/abs/astro-ph/9911177</a> and our paper arXiv:XXXX.XXXXX.</p>
-
-<p>If you have any question, or find a bug in the code, please contact me at azucca@sfu.ca .</p>        
-        
-<p>Alex Zucca</p>
-      </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">MagCAMB maintained by <a href="https://github.com/alexzucca90">alexzucca90</a></p>
-        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-    
-
-  </body>
+<p class="p5"><span class="s2">If you use this code for scientific work, please cite </span><span class="s7">our paper, arXiv:XXXX.XXXXX, and</span><span class="s2"> the original CAMB paper, <a href="http://arxiv.org/abs/astro-ph/9911177"><span class="s5">http://arxiv.org/abs/astro-ph/9911177</span></a>.</span></p>
+<p class="p5"><span class="s2">If you have any question, or find a bug in the code, please contact me at azucca@sfu.ca .</span></p>
+<p class="p5"><span class="s2">Alex Zucca</span></p>
+<p class="p5"><span class="s2">MagCAMB maintained by <a href="https://github.com/alexzucca90"><span class="s5">alexzucca90</span></a></span></p>
+<p class="p5"><span class="s2">Published with <a href="https://pages.github.com/"><span class="s5">GitHub Pages</span></a></span></p>
+</body>
 </html>
