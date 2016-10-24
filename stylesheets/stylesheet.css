@@ -294,7 +294,7 @@ Full-Width Styles
   background: -o-linear-gradient(top, #373737, #212121);
   background: linear-gradient(top, #373737, #212121); -->
   position: relative;
-		background: url(../images/TTMap.png) no-repeat bottom center;
+		background: url(../images/TTMap.png) #373737 no-repeat bottom center;
 		background-attachment: fixed;
 		background-size: cover;
 		text-align: center;
@@ -327,7 +327,7 @@ Full-Width Styles
   bottom: -40px;
   right: 0;
   height: 70px;
-  background: url('../images/icon_download.png') no-repeat 0% 90%;
+  <!-- background: url('../images/icon_download.png') no-repeat 0% 90%; -->
 }
 
 .zip_download_link {
