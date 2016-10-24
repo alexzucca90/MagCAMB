@@ -86,14 +86,10 @@
     Type(InitialPowerParams), save :: P
 
 !==================================================
-!ALEX:  COEFFICIENTS FOR FITTING FUNCTIONS
+!AZ:  COEFFICIENTS FOR FITTING FUNCTIONS
 !-------------- SCALAR ---------------
 !----Delta-Delta----
 !n>0
-!real(dl) :: dd0 =       0.736
-!real(dl) :: dd1 =     0.02177
-!real(dl) :: dd2 =     0.05652
-!real(dl) :: dd3 =   -0.004418
 !General model:
 !f(x,y) = 4/(2*x+3)*y^3-y^4+(sdd1+sdd2*x+sdd3*x^2+sdd4*x^3)*y^5
 !Coefficients (with 95% confidence bounds):
@@ -198,41 +194,6 @@ real(dl) :: sdp1 =      0.3922  !(0.3169, 0.4676)
 
 !-1.5<n<0
 
-!!!!! WRONG STUFF....
-!Linear model Poly55:
-!f(x,y) = ssdp00 + ssdp10*n + ssdp01*lnt + ssdp20*n2 + ssdp11*n*lnt + ssdp02*lnt2 + ssdp30*n3 + ssdp21*n2*lnt
-!+ ssdp12*n*lnt2 + ssdp03*lnt3 + ssdp40*n4 + ssdp31*n3*lnt + ssdp22*n2*lnt2
-!+ ssdp13*n*lnt3 + ssdp04*lnt4 + ssdp50*n5 + ssdp41*n4*lnt + ssdp32*n3*lnt2
-!+ ssdp23*n2*lnt3 + ssdp14*n*lnt4 + ssdp05*lnt5
-!Coefficients (with 95% confidence bounds):
-!real(dl) :: ssdp00 =      -4.501  !(-1131, 1122)
-!real(dl) :: ssdp10 =       22.24  !(-199.2, 243.7)
-!real(dl) :: ssdp01 =       0.351  !(-1027, 1027)
-!real(dl) :: ssdp20 =       13.53  !(-56.9, 83.95)
-!real(dl) :: ssdp11 =       10.46  !(-143.1, 164.1)
-!real(dl) :: ssdp02 =      -1.452  !(-375.3, 372.4)
-!real(dl) :: ssdp30 =      -34.29  !(-57.17, -11.4)
-!real(dl) :: ssdp21 =       19.77  !(-14.57, 54.1)
-!real(dl) :: ssdp12 =      0.2727  !(-40.11, 40.65)
-!real(dl) :: ssdp03 =     -0.2202  !(-68.1, 67.66)
-!real(dl) :: ssdp40 =      -34.58  !(-41.91, -27.26)
-!real(dl) :: ssdp31 =       11.53  !(5.679, 17.38)
-!real(dl) :: ssdp22 =      0.9139  !(-4.944, 6.772)
-!real(dl) :: ssdp13 =    -0.04649  !(-4.816, 4.723)
-!real(dl) :: ssdp04 =    -0.01532  !(-6.164, 6.134)
-!real(dl) :: ssdp50 =       -8.68  !(-9.969, -7.39)
-!real(dl) :: ssdp41 =       2.206  !(1.321, 3.091)
-!real(dl) :: ssdp32 =      0.2428  !(-0.2146, 0.7003)
-!real(dl) :: ssdp23 =     0.01367  !(-0.3322, 0.3595)
-!real(dl) :: ssdp14 =   -0.002742  !(-0.2165, 0.211)
-!real(dl) :: ssdp05 =  -0.0004089  !(-0.2227, 0.2219)
-!Goodness of fit:
-!SSE: 0.6543
-!R-square: 0.9998
-!Adjusted R-square: 0.9998
-!RMSE: 0.05542
-
-
 !General model:
 !f(x,y) = (sdp00+sdp01*n+sdp02*n2+sdp03*n3)*t**(-2*n-2 )+(sdp10+sdp11*n+
 !sdp12*n2+sdp13*n3)*t**(-2*n-1)
@@ -251,16 +212,6 @@ real(dl) :: ssdp13 =       28.88  !(-2715, 2772)
 !Adjusted R-square: 0.9998
 !RMSE: 41.86
 
-
-!PASSIVE
-! (I think this is the same as PP)
-!n>0
-!real(dl) :: spp0 =     -0.3154
-!real(dl) :: spp1 =      0.5424
-!real(dl) :: spp2 =    -0.07531
-!real(dl) :: spp3 =    0.006705
-
-
 !--------------- VECTOR --------------
 !n>=0
 real(dl) :: vv1 =      0.5533
@@ -272,7 +223,6 @@ real(dl) :: vv6 =      0.1975
 real(dl) :: vv7 =    -0.02277
 real(dl) :: vv8 =    0.001899
 
-! This must be replaced
 !-1.5 < n < 0
 
 !Linear model Poly45:
@@ -301,7 +251,6 @@ real(dl) :: V32 =      0.3475  !(0.1969, 0.498)
 real(dl) :: V23 =     -0.1292  !(-0.2696, 0.01115)
 real(dl) :: V14 =     0.02458  !(-0.1043, 0.1535)
 real(dl) :: V05 =     0.04212  !(-0.1147, 0.199)
-
 !Goodness of fit:
 !SSE: 0.0125
 !R-square: 1
@@ -360,20 +309,13 @@ real(dl) :: T05 =  -0.0001977  !(-0.07213, 0.07173)
 
 ! psconst needed only for scalar compensated modes.
 real(dl), parameter :: psconst(5) = (/0.25, 0.25, 0.25, 2., 2./3. /)
-! kDissip and CorrType can be moved inside the P.S parameters.
-!real(dl) :: kDissip
-!integer :: CorrType = 0 ! In order to run without magnetic fields
-!real(dl) :: Magnetic_Index
-!ALEX.
+
 
 
     !Make things visible as neccessary...
 
     public InitialPowerParams, InitialPower_ReadParams, InitializePowers, ScalarPower, TensorPower
     public nnmax,Power_Descript, Power_Name, SetDefPowerParams
-!ALEX:
-!public kDissip, CorrType, Magnetic_Index
-!ALEX.
 
     contains
 
@@ -436,7 +378,6 @@ real(dl), parameter :: psconst(5) = (/0.25, 0.25, 0.25, 2., 2./3. /)
     integer ix
 
 ! MagCAMB: adding the parameters for fitting the functions
-!integer  !This gives me the type of correlation function that has to be computed
 real(dl) :: t, t2, t3, t4, t5!, t6, t7, t8, t9, t10, 
 real(dl) :: lnt,lnt2,lnt3,lnt4,lnt5
 real(dl) :: n,n2, n3, n4, n5
@@ -463,7 +404,7 @@ end if
 if(P%CorrType==0) then
     lnrat = log(k/P%k_0_scalar)
     ScalarPower=P%ScalarPowerAmp(ix)*exp(lnrat*( P%an(ix)-1 + lnrat*(P%n_run(ix)/2 + P%n_runrun(ix)/6*lnrat)))
-
+	if(ScalarPower<0) write(*,*) "Negative PowerScalar"
 ! SCALAR MAGNETIC
 !Compensated
 else if(P%CorrType==1) then!Delta-Delta Fit
@@ -490,20 +431,13 @@ else if(P%CorrType==1) then!Delta-Delta Fit
             ssdd31*n3*lnt + ssdd22*n2*lnt2 + ssdd13*n*lnt3 + ssdd04*lnt4 + ssdd32*n3*lnt2&
             + ssdd23*n2*lnt3 + ssdd14*n*lnt4 + ssdd05*lnt5) - psconst(2)*(t**(2*n+6)*&
             ((ssdp00+ssdp01*n+ssdp02*n2+ssdp03*n3)*t**(-2*n-2 )+(ssdp10+ssdp11*n+ssdp12*n2+ssdp13*n3)*t**(-2*n-1))))
-
-
-            !exp(ssdp00 + &
-            !ssdp10*n + ssdp01*lnt + ssdp20*n2 + ssdp11*n*lnt + ssdp02*lnt2 + ssdp30*n3 + ssdp21*n2*lnt &
-            !+ ssdp12*n*lnt2 + ssdp03*lnt3 + ssdp40*n4 + ssdp31*n3*lnt + ssdp22*n2*lnt2 &
-            !+ ssdp13*n*lnt3 + ssdp04*lnt4 + ssdp50*n5 + ssdp41*n4*lnt + ssdp32*n3*lnt2 &
-            !+ ssdp23*n2*lnt3 + ssdp14*n*lnt4 + ssdp05*lnt5))
-            !ScalarPower = 0.d0
         else !t>0.5
             write(*,*) "t = ", t, "Fitting functions not computed for t>0.5"
             write(*,*) "Set P(k)=0"
             ScalarPower = 0.d0
         end if
     end if
+	if(ScalarPower<0) write(*,*) "Negative PowerScalar"
 else if(P%CorrType==2) then!Pi - Pi
     if(n .ge. 0) then !n>=0
         if (t .le. 0.5) then
@@ -528,20 +462,13 @@ else if(P%CorrType==2) then!Pi - Pi
             sspp31*n3*lnt + sspp22*n2*lnt2 + sspp13*n*lnt3 + sspp04*lnt4 + sspp32*n3*lnt2&
             + sspp23*n2*lnt3 + sspp14*n*lnt4 + sspp05*lnt5) -psconst(2)*(t**(2*n+6)*&
             ((ssdp00+ssdp01*n+ssdp02*n2+ssdp03*n3)*t**(-2*n-2 )+(ssdp10+ssdp11*n+ssdp12*n2+ssdp13*n3)*t**(-2*n-1))))
-
-
-!psconst(2)*exp(ssdp00 + &
-!            ssdp10*n + ssdp01*lnt + ssdp20*n2 + ssdp11*n*lnt + ssdp02*lnt2 + ssdp30*n3 + ssdp21*n2*lnt &
-!            + ssdp12*n*lnt2 + ssdp03*lnt3 + ssdp40*n4 + ssdp31*n3*lnt + ssdp22*n2*lnt2 &
-!            + ssdp13*n*lnt3 + ssdp04*lnt4 + ssdp50*n5 + ssdp41*n4*lnt + ssdp32*n3*lnt2 &
-!            + ssdp23*n2*lnt3 + ssdp14*n*lnt4 + ssdp05*lnt5))
-            !ScalarPower=0.d0
         else !t>0.5
             write(*,*) "t = ", t, "Fitting functions not computed for t>0.5"
             write(*,*) "Set P(k)=0"
             ScalarPower = 0.d0
         end if
     end if
+	if(ScalarPower<0) write(*,*) "Negative PowerScalar"
 else if(P%CorrType==3) then!Delta - Pi
     if(n .ge. 0) then !n>=0
         if (t .le. 0.5) then
@@ -562,19 +489,13 @@ else if(P%CorrType==3) then!Delta - Pi
             ScalarPower = P%ScalarPowerAmp(ix) * (P%kDissip/ (2*pi))**(2.d0*n+6)*&
             t**(2*n+6)*((ssdp00+ssdp01*n+ssdp02*n2+ssdp03*n3)*t**(-2*n-2 )+&
             (ssdp10+ssdp11*n+ssdp12*n2+ssdp13*n3)*t**(-2*n-1))
-
-!            exp(ssdp00 + ssdp10*n + ssdp01*lnt + ssdp20*n2 + ssdp11*n*lnt + &
-!            ssdp02*lnt2 + ssdp30*n3 + ssdp21*n2*lnt + ssdp12*n*lnt2 + ssdp03*lnt3 &
-!            + ssdp40*n4 + ssdp31*n3*lnt + ssdp22*n2*lnt2 + ssdp13*n*lnt3 + ssdp04*lnt4&
-!            + ssdp50*n5 + ssdp41*n4*lnt + ssdp32*n3*lnt2 + ssdp23*n2*lnt3 + ssdp14*n*lnt4 + ssdp05*lnt5)
-            !write(*,*) "Amp. = ", P%ScalarPowerAmp(ix)
-            !write(*,*) "Delta-Pi P(k) = ", ScalarPower
         else !t>0.5
             write(*,*) "t = ", t, "Fitting functions not computed for t>0.5"
             write(*,*) "Set P(k)=0"
             ScalarPower = 0.d0
         end if
     end if
+!	if(ScalarPower<0) write(*,*) "Negative PowerScalar"
 ! Scalar Passive modes
 else if(P%CorrType==5) then
     !N>0
@@ -594,7 +515,7 @@ else if(P%CorrType==5) then
             ScalarPower = 0.d0
         end if
     end if
-
+	if(ScalarPower<0) write(*,*) "Negative PowerScalar"
 ! VECTOR MAGNETIC
 ! Only Compensated Modes.
 else if(P%CorrType==4) then ! Pi-Pi
@@ -623,20 +544,8 @@ else if(P%CorrType==4) then ! Pi-Pi
             write(*,*) "t = ", t, " t>0.5 , P(k) = 0"
             ScalarPower = 0.d0
         end if
-    ! This was for testing.....
-    !else if (n<-1.5 .and. n> -1.75) then
-    !    if(t<=0.5) then
-    !        ScalarPower = P%ScalarPowerAmp(ix) * (kDissip/ (2*pi))**(2.d0*n+6)* t**(2.d0*n+6)*&
-    !                (p00 + p10*n + p01*t + p20*n2 + p11*n*t + p02*t2 + p30*n3 + p21*n2*t &
-    !                + p12*n*t2 + p03*t3 + p40*n4 + p31*n3*t + p22*n2*t2 &
-    !                + p13*n*t3 + p04*t4 + p50*n5 + p41*n4*t + p32*n3*t2 &
-    !                + p23*n2*t3 + p14*n*t4 + p05*t5)
-!if(ScalarPower < 0) write(*,*) "PS < 0!!!!", ScalarPower
-        !else
-        !    write(*,*) "t = ", t, " t>0.5 , P(k) = 0"
-        !    ScalarPower = 0.d0
-        !end if
     end if
+	if(ScalarPower<0) write(*,*) "Negative VectorPower"
 else
     !ERROR!!!
     write(*,*) "Power Spectrum not set..."
@@ -669,7 +578,6 @@ end if
     real(dl) :: n,n2, n3, n4, n5
 if(P%CorrType /= 0) then
 t = k/P%kDissip
-    !write(*,*) "t = ", t
     t2 = t*t
     t3 = t2*t
     t4 = t3*t
@@ -728,6 +636,8 @@ else if (P%CorrType == 5) then
             TensorPower = 0.d0
         end if
     end if
+!	write(*,*) "Tensor Power = ", TensorPower
+	if(TensorPower<0) write(*,*) "Negative TensorPower"
 else
 !ERROR
 end if
