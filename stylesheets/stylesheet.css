@@ -296,7 +296,7 @@ Full-Width Styles
   position: relative; -->
   background: url(../images/TTMap.png) no-repeat bottom center;
   background-attachment: fixed;
-  <!-- background-size: cover; -->
+  background-size: cover;
   text-align: center;
 }
 
