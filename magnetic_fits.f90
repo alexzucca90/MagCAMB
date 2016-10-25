@@ -18,7 +18,7 @@ use InitialPower
 
   !private
   
-  character(len= 100) :: mi_filename = 'magnetic_integral_newnew.dat'
+  character(len= 100) :: mi_filename = 'magnetic_integral.dat'
 !  integer, parameter :: mi_nr = 26  
   integer, parameter :: mi_nr = 50
   integer, parameter :: mi_nc = 6
