@@ -15,7 +15,7 @@ RUN:
 - modify params_mag.ini according to what you want to calculate 
 - ./camb params_mag.ini
 
-If you use this code for a scientific work, please cite our paper, arXiv:1611.00757, and the original CAMB paper, http://arxiv.org/abs/astro-ph/9911177.
+If you use this code for a scientific work, please cite our paper, https://arxiv.org/abs/1611.00757, and the original CAMB paper, http://arxiv.org/abs/astro-ph/9911177.
 
 Alex Zucca
 
