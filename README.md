@@ -1,7 +1,7 @@
 # MagCAMB
-Version 0.0.
+Version 1.0.
 
-Patch for CAMB (http://camb.info) that computes CMB anisotropies sourced by Primordial Magnetic Fields (PMF)
+Patch for [CAMB](http://camb.info) that computes CMB anisotropies sourced by Primordial Magnetic Fields (PMF)
 
 - integrated with CosmoMC (MagCosmoMC). See https://github.com/alexzucca90/MagCosmoMC. 
 - based on CAMB 2015. Make sure to work with the CAMB 2015 version. Compatibility with other versions is not guaranteed.
@@ -15,7 +15,7 @@ RUN:
 - modify params_mag.ini according to what you want to calculate 
 - ./camb params_mag.ini
 
-If you use this code for a scientific work, please cite our paper, https://arxiv.org/abs/1611.00757, and the original CAMB paper, http://arxiv.org/abs/astro-ph/9911177.
+If you use this code for a scientific work, please cite our [paper](https://arxiv.org/abs/1611.00757), and the original [CAMB paper](http://arxiv.org/abs/astro-ph/9911177).
 
 Alex Zucca
 
