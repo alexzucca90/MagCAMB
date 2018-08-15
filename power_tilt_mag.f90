@@ -404,7 +404,7 @@ end if
 if(P%CorrType==0) then
     lnrat = log(k/P%k_0_scalar)
     ScalarPower=P%ScalarPowerAmp(ix)*exp(lnrat*( P%an(ix)-1 + lnrat*(P%n_run(ix)/2 + P%n_runrun(ix)/6*lnrat)))
-	if(ScalarPower<0) write(*,*) "Negative PowerScalar"
+	!if(ScalarPower<0) write(*,*) "Negative PowerScalar"
 ! SCALAR MAGNETIC
 !Compensated
 else if(P%CorrType==1) then!Delta-Delta Fit
@@ -437,7 +437,7 @@ else if(P%CorrType==1) then!Delta-Delta Fit
             ScalarPower = 0.d0
         end if
     end if
-	if(ScalarPower<0) write(*,*) "Negative PowerScalar"
+	!if(ScalarPower<0) write(*,*) "Negative PowerScalar"
 else if(P%CorrType==2) then!Pi - Pi
     if(n .ge. 0) then !n>=0
         if (t .le. 0.5) then
@@ -468,7 +468,7 @@ else if(P%CorrType==2) then!Pi - Pi
             ScalarPower = 0.d0
         end if
     end if
-	if(ScalarPower<0) write(*,*) "Negative PowerScalar"
+	!if(ScalarPower<0) write(*,*) "Negative PowerScalar"
 else if(P%CorrType==3) then!Delta - Pi
     if(n .ge. 0) then !n>=0
         if (t .le. 0.5) then
@@ -495,7 +495,7 @@ else if(P%CorrType==3) then!Delta - Pi
             ScalarPower = 0.d0
         end if
     end if
-!	if(ScalarPower<0) write(*,*) "Negative PowerScalar"
+! if(ScalarPower<0) write(*,*) "Negative PowerScalar"
 ! Scalar Passive modes
 else if(P%CorrType==5) then
     !N>0
@@ -515,7 +515,7 @@ else if(P%CorrType==5) then
             ScalarPower = 0.d0
         end if
     end if
-	if(ScalarPower<0) write(*,*) "Negative PowerScalar"
+	!if(ScalarPower<0) write(*,*) "Negative PowerScalar"
 ! VECTOR MAGNETIC
 ! Only Compensated Modes.
 else if(P%CorrType==4) then ! Pi-Pi
@@ -545,7 +545,7 @@ else if(P%CorrType==4) then ! Pi-Pi
             ScalarPower = 0.d0
         end if
     end if
-	if(ScalarPower<0) write(*,*) "Negative VectorPower"
+	!if(ScalarPower<0) write(*,*) "Negative VectorPower"
 else
     !ERROR!!!
     write(*,*) "Power Spectrum not set..."
@@ -637,7 +637,7 @@ else if (P%CorrType == 5) then
         end if
     end if
 !	write(*,*) "Tensor Power = ", TensorPower
-	if(TensorPower<0) write(*,*) "Negative TensorPower"
+	!if(TensorPower<0) write(*,*) "Negative TensorPower"
 else
 !ERROR
 end if
