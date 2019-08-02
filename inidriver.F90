@@ -317,8 +317,9 @@
 #ifdef RUNIDLE
     call SetIdle
 #endif
-
+write(*,*) "calling CAMB_GetResults..."
     if (global_error_flag==0) call CAMB_GetResults(P)
+write(*,*) "..done."
     if (global_error_flag/=0) then
         write(*,*) 'Error result '//trim(global_error_message)
         error stop

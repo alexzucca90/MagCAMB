@@ -6,10 +6,7 @@ module magnetic
   use CAMB
   use richsub
   use Transfer
-
-!ALEX:
-use InitialPower
-!ALEX.
+  use InitialPower  !ALEX.
 
   ! Module for calculating the amplitudes of the magnetic perturbations
   ! to the energy momentum tensor from the magnetic field properties.
@@ -18,24 +15,21 @@ use InitialPower
 
   !private
   
-  character(len= 100) :: mi_filename = 'magnetic_integral.dat'
-!  integer, parameter :: mi_nr = 26  
-  integer, parameter :: mi_nr = 50
-  integer, parameter :: mi_nc = 6
-
+    character(len= 100) :: mi_filename = 'magnetic_integral_new.dat'
+    ! column and row , contains bothe helical and non-helcial assuming infinity k,integral
+    integer, parameter :: mi_nr = 120
+    integer, parameter :: mi_nc = 13
+!logical :: maximal_helical = .false.  !real(dl) :: AB, AH
   ! Array of the spectral indices
   real(dl) :: specind(mi_nr)
-
   ! Array of the calculated angular integrals
-  ! In order: delta, delta-pi, pi, pi vector, pi-tensor
+  ! In order: delta, delta-pi, pi, pi-vector, pi-tensor, h-delta,h-delta-pi,h-pi,h-pi-vec,h-pi-tens,h-pi-vec-odd,h-pi-tens-odd
   real(dl) :: intval(mi_nr,mi_nc-1)
-  
   ! Array of second derivatives for splining
   real(dl) :: intval2(mi_nr,mi_nc-1)
 
   ! Array of constants for each PS
-  real(dl), parameter :: psconst(mi_nc-1) = (/0.25, 0.25, 0.25, 2., 2./3. /)
-  !real(dl), parameter :: psconst(mi_nc-1) = (/0.25, 0.5, 1., 1., 1./2. /)!, yun
+  real(dl), parameter :: psconst(mi_nc-1) = (/0.25, 0.25, 0.25, 2., 2./3., -0.5, 0.25,-0.25, -2., 4./3., -2., -2./3./)
 
   ! Constant for calculating the amplitudes = 1/(2*rho_gamma_0)^2
   real(dl), parameter :: amp_constant = 1.432e-12_dl
@@ -43,14 +37,13 @@ use InitialPower
   !Define constants for specifying type of perturbation
   !integer, parameter :: mag_scal_passive = 1, mag_scal_comp = 2, &
   !     mag_vec_comp = 3, mag_tens_passive = 4, mag_tens_comp = 5
-  integer, parameter :: mag_compensated = 1, mag_passive = 2, mag_and_prim = 3
+  integer, parameter :: mag_compensated = 1, mag_passive = 2!, mag_and_prim = 3
 
   logical :: notloaded = .true.
-
+  
 contains
 
-
-  ! Initialise the module. Read files etc.
+  ! Initialise the module. Read files etc. contains both helical and non-helical
   subroutine magamp_init
 
     implicit none
@@ -72,32 +65,9 @@ contains
     notloaded = .false.
 
   end subroutine magamp_init
-
   
-  ! Function to calculate the common ampltiude
-  ! B_lambda is in units of nano Gauss.
-  real(dl) function mag_amplitude(spec_ind, b_lambda)
-    
-    !use AMLutils
-
-    real(dl), intent(in) :: spec_ind
-    real(dl), intent(in) :: b_lambda
-    
-    
-    ! Scale by the spectral index dependent bits, and the field amplitude
-    mag_amplitude = amp_constant * b_lambda**4 * (2*pi)**(2*spec_ind + 4) &
-         / GAMMA((spec_ind + 3)/2._dl)**2
-    
-  end function mag_amplitude
-    
-
-    
-
-
-
-  ! Get integral values by splining loaded files.
+! Get integral values by splining loaded files. contains both helical and non-helical
   real(dl) function mag_spline_int(mag_ind, corr_num)
-    
     real(dl), intent(in) :: mag_ind
     integer, intent(in) :: corr_num
 
@@ -108,6 +78,22 @@ contains
 
   end function mag_spline_int
 
+  !================ Non_Helical Parts ===================
+  ! Function to calculate the common ampltiude
+  ! B_lambda is in units of nano Gauss.
+  real(dl) function mag_amplitude(spec_ind, b_lambda)
+    
+    !use AMLutils
+    real(dl), intent(in) :: spec_ind
+    real(dl), intent(in) :: b_lambda
+    
+    
+    ! Scale by the spectral index dependent bits, and the field amplitude
+    mag_amplitude = amp_constant * b_lambda**4 * (2*pi)**(2*spec_ind + 4) &
+         / GAMMA((spec_ind + 3)/2._dl)**2
+
+  end function mag_amplitude
+    
     
   ! Function to calculate the amplitude of a particular spectrum
   real(dl) function mag_psamp(spec_ind, b_lambda, corr_num)
@@ -115,12 +101,37 @@ contains
     real(dl), intent(in) :: spec_ind
     real(dl), intent(in) :: b_lambda
     integer, intent(in) :: corr_num
-
+    write(*,*) "non-helical table Int and table int value = ", mag_amplitude(spec_ind, b_lambda) *&
+    mag_spline_int(spec_ind, corr_num)*psconst(corr_num) !useless,check
     mag_psamp = mag_amplitude(spec_ind, b_lambda) * &
          mag_spline_int(spec_ind, corr_num) * psconst(corr_num)
   end function mag_psamp
 
+!============== Helical part ==============================
+ !Amplitude
+real(dl) function mag_amplitude_hel(spec_ind, b_lambda)
+    !use AMLutils
+    real(dl), intent(in) :: spec_ind
+    real(dl), intent(in) :: b_lambda
 
+    ! Scale by the spectral index dependent bits, and the field amplitude
+    mag_amplitude_hel = amp_constant * b_lambda**4 * (2*pi)**(2*spec_ind + 4) &
+                        / GAMMA((spec_ind + 4)/2._dl)**2
+
+end function mag_amplitude_hel
+
+ ! Function to calculate the amplitude of a particular spectrum
+real(dl) function mag_psamp_hel(spec_ind, b_lambda, corr_num)
+    real(dl), intent(in) :: spec_ind
+    real(dl), intent(in) :: b_lambda
+    integer, intent(in) :: corr_num
+    write(*,*) "helical table Int and table int value = ", mag_amplitude_hel(spec_ind, b_lambda) * &
+    mag_spline_int(spec_ind, corr_num)*psconst(corr_num) !useless,check
+    mag_psamp_hel = mag_amplitude_hel(spec_ind, b_lambda) * &
+    mag_spline_int(spec_ind, corr_num) * psconst(corr_num)
+end function mag_psamp_hel
+
+!======== This might be useless...
 
   ! Set the parameters needed for adding in the Alfven velocity to get
   ! a magnetic Jeans mass. Must be done separately so we can use for
@@ -218,13 +229,20 @@ contains
  ! Calculate the magnetic Cls 
  ! Largely this sets up all the relevant parameters and then calls
  ! cls_from_params, returning the results.
-  subroutine mag_cls(CP, magmode, magamp, magind, maglrat, usedata)
+ ! Adding the Helical contributions
+  subroutine mag_cls(CP, magmode, magamp, magind, maglrat, helical_amp, helical_ind, usedata)
 
     type(CAMBParams) ,intent(inout) :: CP
 
     integer, intent(in) :: magmode
     double precision, intent(in) :: magamp, magind, maglrat
+    !logical, intent(in) :: do_helical
+    double precision, intent(in) :: helical_amp, helical_ind
     logical, intent(in), optional :: usedata
+
+!other things, check 
+    real(dl) :: t, DD, DP, PP, DDH, DPH, PPH
+    integer :: i_t
     
     double precision :: amp, camb_ind
 
@@ -240,7 +258,6 @@ contains
 
     ud = .false.
     if(present(usedata)) ud = usedata
-    Cltemp(:,:) = 0.0_dl!yun
 
     ! Set photon and neutrino fractions
     Rg = 1._dl / (1._dl+7._dl/8. * (4._dl/11.)**(4._dl/3.) * (CP%Num_Nu_massless + CP%Num_Nu_massive))
@@ -256,13 +273,14 @@ contains
     (2*pi)**((magind+3)/(magind+5))*(CP%H0/100)**(1/(magind+5))&
     *((CP%omegab*(CP%H0/100)**2)/0.022)**(1/(magind+5))
 
+    write(*,*) "kD = ", CP%InitPower%kDissip
 
 
     ! Set common power spectrum stuff
     CP%InitPower%nn = 1
-    !CP%InitPower%rat(1) = 1._dl  !yun
+    CP%InitPower%rat(1) = 1._dl 
     CP%InitPower%n_run(1) = 0._dl
-    CP%InitPower%nt_run(1) = 0._dl!yun
+    CP%InitPower%nt_run(1) = 0._dl !tensor 
     CP%InitPower%k_0_scalar = 2*pi
     CP%InitPower%k_0_tensor = 2*pi
 
@@ -277,117 +295,198 @@ contains
     ! Convert logarithm into natural log
     lrat = maglrat * log(10._dl)
 
-    if(CP%WantTensors) then !yun
+    if(CP%WantTensors) then
 ! Ensure tensor neutrinos are on (as mag field modes don't make
 ! any sense otherwise)
-    DoTensorNeutrinos = .true.
-
-!AZ: Set tensor_parameterization = 3.
-    CP%InitPower%tensor_parameterization = 3
-
+     DoTensorNeutrinos = .true.
+!AZ: Set tensor_parameterization = 3. check
+     CP%InitPower%tensor_parameterization = 3
+        
      if(magmode == mag_passive) then
-       CP%WantTensors = .true.!YUN
-       delb = 0._dl ! Set up perturbations
-       pib = 0._dl
-       tens0 = 1._dl !yun
-       !Choose between n>0 and n<0
-       if(magind<-1.5) then
-            if(Feedbacklevel>1) write(*,*) "USING INTERPOLATION TABLE"
-            CP%InitPower%ant(1) = 2._dl*(3 + magind)
-            CP%InitPower%TensorPowerAmp(1) = mag_psamp(magind, magamp, 5) * (6._dl*Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2!yun
-            CP%InitPower%CorrType = 0
-        else if (magind .ge. -1.5) then
-            !Use first fitting formula
-            if(Feedbacklevel>1) write(*,*) "USING FITTING FORMULAS"
-            CP%InitPower%ant(1) = magind
-            CP%InitPower%TensorPowerAmp(1)=mag_amplitude(magind, magamp)*psconst(5)*(6._dl*Rg*(lrat+(5._dl/(8._dl*Rv)-1)))**2
-            CP%InitPower%CorrType = 5
-        end if
-
-!AZ: I must use the fitting functions even for this..
+        CP%WantTensors = .true.
+        delb = 0._dl ! Set up perturbations
+        pib = 0._dl
+       
+            if(magind < -2.d0) then
+               !if(Feedbacklevel>1) 
+               write(*,*) "USING INTERPOLATION TABLE for non-helical P_tpp"
+               CP%InitPower%ant(1) = 2._dl*(3 + magind)
+               CP%InitPower%TensorPowerAmp(1) = mag_psamp(magind, magamp, 5) *&
+                                                (3._dl*Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2!yun
+               CP%InitPower%CorrType = 0
+            else       
+!Use first fitting formula
+               !if(Feedbacklevel>1) 
+               write(*,*) "USING FITTING FORMULAS for non-helical P_tpp"
+               CP%InitPower%ant(1) = magind
+               CP%InitPower%TensorPowerAmp(1) = mag_amplitude(magind, magamp)*psconst(5)*&
+                                                (3._dl*Rg*(lrat+(5._dl/(8._dl*Rv)-1)))**2
+               CP%InitPower%CorrType = 6
+            end if
+!tensor helical passive
+            if(do_helical) then
+                if(helical_ind < -2.d0) then
+                    CP%InitPower%CorrType_hel = 0
+                    CP%InitPower%TensorPowerAmp_hel(1) = mag_psamp_hel(helical_ind, helical_amp,10)&
+                                                       *(3._dl*Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2 
+                    CP%InitPower%ant_hel1(1) = 2.d0*(helical_ind +3.d0)
+                    write(*,*) "Using interpolation TABLE for helical P_tpp"
+                else 
+                    write(*,*) "Using fitting functions for helical P_tpp" 
+                    CP%InitPower%ant_hel1(1) = helical_ind
+                    CP%InitPower%TensorPowerAmp_hel(1) = mag_amplitude_hel(helical_ind, helical_amp)*psconst(10)&
+                                                       *(3._dl*Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2
+                    CP%InitPower%CorrType_hel = 6 
+                end if
+             end if
+                  
      else if(magmode == mag_compensated) then
-       CP%WantTensors = .true.!YUN
-       delb = 0._dl ! Set up perturbations
-       pib = 1._dl
-       tens0 = 0._dl
-       camb_ind = 2._dl*(3 + magind)
-       CP%InitPower%ant(1) = camb_ind
-        !CP%InitPower%TensorPowerAmp(1)= amp!yun
-       CP%InitPower%TensorPowerAmp(1) = mag_psamp(magind, magamp, 5)!yun
-     end if
-
-    end if  !yun
-
-    if(CP%WantScalars) then
+          CP%WantTensors = .true.
+          delb = 0._dl ! Set up perturbations
+          pib = 1._dl
+          tens0 = 0._dl
+  
+            if(magind < -2.d0) then
+               !if(Feedbacklevel>1) 
+               write(*,*) "USING INTERPOLATION TABLE for non-helical P_tpp"
+               CP%InitPower%ant(1) = 2._dl*(3 + magind)
+               CP%InitPower%TensorPowerAmp(1) = mag_psamp(magind, magamp, 5)
+               CP%InitPower%CorrType = 0
+               !write(*,*) "non-helical mag_amplitude = ", mag_amplitude(magind, magamp,5) !useless,check
+               ! write(*,*) "CP%InitPower%an(1) = ", CP%InitPower%ant(1) !useless,check
+                !write(*,*) "CP%InitPower%TensorPowerAmp(1) = ",  CP%InitPower%TensorPowerAmp(1) !useless,check
+            else       
+            !Use first fitting formula
+               !if(Feedbacklevel>1) 
+               write(*,*) "USING FITTING FORMULAS for non-helical P_tpp"
+               CP%InitPower%ant(1) = magind
+               CP%InitPower%TensorPowerAmp(1)=mag_amplitude(magind, magamp)*psconst(5)
+               CP%InitPower%CorrType = 7
+            end if
+            
+            if(do_helical) then
+                if(helical_ind < -2.d0) then
+                    CP%InitPower%CorrType_hel = 0
+                    CP%InitPower%TensorPowerAmp_hel(1)=mag_psamp_hel(helical_ind, helical_amp,10) 
+                    CP%InitPower%ant_hel1(1) = 2.d0*(helical_ind +3.d0)
+                    write(*,*) "Using interpolation TABLE for helical passive P_tpp"
+                else 
+                    write(*,*) "Using fitting functions for helical passive P_tpp" 
+                    CP%InitPower%ant_hel1(1) = helical_ind
+                    CP%InitPower%TensorPowerAmp_hel(1)=mag_amplitude_hel(helical_ind, helical_amp)*psconst(10)
+                    CP%InitPower%CorrType_hel = 7
+                end if
+             end if
+     end if   
+!sclar    
+    else if(CP%WantScalars) then
        ! Setup the parameters for calculating the Alfven velocity
+       !This might be useless..
        call mag_set_alfven(magamp, magind)
 
        if(magmode == mag_compensated) then
           ! This section is quite trickey as we need to combine the two
           ! correlated perturbation types. It essentially fetches each
           ! set of Cls with the correct amplitudes (taking into account
-          ! the cross correlation), and then sums them up.
-          
+          ! the cross correlation), and then sums them up.         
           ! Set up common parameters
 
           CP%Scalar_initial_condition = 6
           CP%WantScalars = .true.
-
-!Delta-Delta
-
-          if(magind .ge. -1.5) then
-                CP%InitPower%an(1) =  magind
-                CP%InitPower%CorrType = 1
-                write(*,*) "Using FITTING Functions"
-                CP%InitPower%ScalarPowerAmp(1)=mag_amplitude(magind, magamp)!* psconst(1) - mag_amplitude(magind, magamp)* psconst(2)
-          else
+! Delta-Delta - Delta-Pi, The density perturbed mode (delb = 1, pib = 0)
+          write(*,*) "Delta-Delta - Delta-Pi"
+                  
+          if(magind < -2.d0) then
+                write(*,*) "Using interpolation TABLE for non-helical P_SDD-P_SDPi part"
                 CP%InitPower%an(1) = 1._dl + 2._dl*(3 + magind)
-                CP%InitPower%CorrType = 0
                 CP%InitPower%ScalarPowerAmp(1)= mag_psamp(magind, magamp, 1) - mag_psamp(magind, magamp, 2)
-                write(*,*) "Using interpolation TABLE"
-          endif
+                CP%InitPower%CorrType = 0
+          else
+!Use first fitting formula
+                write(*,*) "USING FITTING FORMULAS for non-helical P_SDD-P_SDPi part"
+                CP%InitPower%an(1) =  magind
+                CP%InitPower%ScalarPowerAmp(1) = mag_amplitude(magind, magamp)
+                CP%InitPower%CorrType = 1               
+          end if
+
+          if(do_helical) then
+             if(helical_ind < -2.d0) then
+                write(*,*) "Using interpolation TABLE for helical P_ADD-P_ADPi part"
+                CP%InitPower%CorrType_hel = 0
+                CP%InitPower%ScalarPowerAmp_hel(1)=mag_psamp_hel(helical_ind, helical_amp,6) -&
+                                                       mag_psamp_hel(helical_ind, helical_amp,7)
+                CP%InitPower%an_hel1(1) =  1.d0 + 2.d0*(helical_ind +3.d0)
+             else
+!Use first fitting formula
+                write(*,*) "USING FITTING FORMULAS for helical P_ADD-P_ADPi part"
+                CP%InitPower%an_hel1(1) = helical_ind
+                CP%InitPower%ScalarPowerAmp_hel(1) = mag_amplitude_hel(helical_ind, helical_amp)
+                CP%InitPower%CorrType_hel = 1
+             end if                
+          end if
+          
           delb = 1._dl ! Set up perturbations
           pib = 0._dl
-           ! Cltemp = 0.
           call cls_from_params(CP,Cltemp2,ud)
           Cltemp(:,:) = Cltemp(:,:) + Cltemp2(:,:)
-
-
-!Pi-Pi
-
-          if(magind .ge. -1.5) then
-                CP%InitPower%CorrType = 2
-                write(*,*) "Using FITTING Functions"!mag_amplitude(magind, magamp)* psconst(
-                CP%InitPower%ScalarPowerAmp(1)=mag_amplitude(magind, magamp)!* psconst(3) - mag_amplitude(magind, magamp)* psconst(2)
-          else
-                CP%InitPower%CorrType = 0
-                write(*,*) "Using interpolation TABLE"
+!------------------------------------------------The stress perturbed mode (delb = 0, pib = 1)
+          write(*,*) "Pi-Pi - Delta-Pi"
+          if(magind < -2.d0) then 
+                write(*,*) "Using interpolation TABLE for non-helical P_SPiPi-P_SDPi "
                 CP%InitPower%ScalarPowerAmp(1)= mag_psamp(magind, magamp, 3) - mag_psamp(magind, magamp, 2)
-          endif
+          else             
+                write(*,*) "Using FITTING Functions for non-helical P_SPiPi-P_SDPi "
+                CP%InitPower%CorrType = 2   
+          end if 
+
+          if(do_helical) then
+             if(helical_ind < -2.d0) then
+               write(*,*) "Using interpolation TABLE for helical P_APiPi-P_ADPi part"
+               CP%InitPower%ScalarPowerAmp_hel(1) = mag_psamp_hel(helical_ind, helical_amp,8) -&
+                                                       mag_psamp_hel(helical_ind, helical_amp,7)
+             else
+!Use first fitting formula
+                write(*,*) "USING FITTING FORMULAS for helical P_APiPi-P_ADPi part"
+                CP%InitPower%CorrType_hel = 2
+              end if               
+          end if
+   
           delb = 0._dl ! Set up perturbations
           pib = 1._dl
           call cls_from_params(CP,Cltemp2,ud)
           Cltemp(:,:) = Cltemp(:,:) + Cltemp2(:,:)
-!Delta-Pi
 
-          if(magind .ge. -1.5) then
-                CP%InitPower%CorrType = 3
-                write(*,*) "Using FITTING Functions"
-                CP%InitPower%ScalarPowerAmp(1)= mag_amplitude(magind, magamp)* psconst(2)
-          else
-                CP%InitPower%CorrType = 0
-                write(*,*) "Using interpolation TABLE"
+!-------------------------------------------------
+!! The combined perturbation (delb = 1, pib = 1)
+          write(*,*) "Delta-Pi"
+          if(magind < -2.d0) then 
+                write(*,*) "Using interpolation TABLE for non-helical PSDP"
                 CP%InitPower%ScalarPowerAmp(1)= mag_psamp(magind, magamp, 2)
-          endif
+          else
+                write(*,*) "Using FITTING Functions for non-helical PSDP"
+                CP%InitPower%CorrType = 3  
+          end if
+          
+          if(do_helical) then
+             if(helical_ind < -2.d0) then
+               write(*,*) "Using interpolation TABLE for helical P_ADP part"
+               CP%InitPower%ScalarPowerAmp_hel(1) = mag_psamp_hel(helical_ind, helical_amp,7)
+             else
+!Use first fitting formula
+                write(*,*) "USING FITTING FORMULAS for helical P_ADP part"
+                CP%InitPower%CorrType_hel = 3
+              end if               
+          end if
+ 
           delb = 1._dl ! Set up perturbations
           pib = 1._dl
           call cls_from_params(CP,Cltemp2,ud)
           Cltemp(:,:) = Cltemp(:,:) + Cltemp2(:,:)
-
           write (*,*) "End"
           ! Copy back into Cl_scalar array
           Cl_scalar(lmin:CP%Max_l, 1, C_Temp:C_last) = Cltemp(lmin:CP%Max_l, C_Temp:C_last)
-
+! Reset the Alfven velocity related stuff
+      
           call mag_reset_alfven
 
           return
@@ -397,50 +496,96 @@ contains
           CP%Scalar_initial_condition = 1
           ! Set up perturbations
           delb = 0._dl
-          pib = 0._dl
-          
+          pib = 0._dl          
           CP%WantScalars = .true.
-          if(magind.ge.-1.5) then
-             if (Feedbacklevel>1) write(*,*) "Using FITTING FUNCTIONS"
-                 CP%InitPower%an(1) = magind
-                 CP%InitPower%CorrType = 5
-                 CP%InitPower%ScalarPowerAmp(1)=mag_amplitude(magind, magamp)*psconst(3)*&
+          
+          if(magind < -2.d0) then
+                if (Feedbacklevel>1) write(*,*) "Using interpolation TABLE for non-helical passive P_Spp part"
+                CP%InitPower%an(1) = 1._dl + 2._dl*(3 + magind)
+                CP%InitPower%ScalarPowerAmp(1)= mag_psamp(magind, magamp, 3)*&
+                                                (Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2
+                CP%InitPower%CorrType = 0
+          else
+!Use first fitting formula
+                if (Feedbacklevel>1) write(*,*) "USING FITTING FORMULAS for non-helical passive P_Spp part"
+                CP%InitPower%an(1) = magind
+                CP%InitPower%ScalarPowerAmp(1)=mag_amplitude(magind, magamp)*psconst(3)*&
                                             (Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2
+                CP%InitPower%CorrType = 4               
+          end if
 
+          if(do_helical) then
+             if(helical_ind < -2.d0) then
+                write(*,*) "Using interpolation TABLE for helical passive P_App part"
+                CP%InitPower%CorrType_hel = 0   
+                CP%InitPower%an_hel1(1) = 1.d0 + 2.d0*(3.d0+helical_ind)
+                CP%InitPower%ScalarPowerAmp_hel(1)=mag_psamp_hel(helical_ind, helical_amp, 8) &
+                                                    * (Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2
              else
-               if (Feedbacklevel>1) write(*,*) "Using INTERPOLATION TABLE"
-               CP%InitPower%an(1) = 1._dl + 2._dl*(3 + magind)
-               CP%InitPower%ScalarPowerAmp(1)= mag_psamp(magind, magamp, 3) * (Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2
-               CP%InitPower%CorrType = 0
-            end if
+!Use first fitting formula
+                write(*,*) "USING FITTING FORMULAS for helical passive P_App part"
+                CP%InitPower%an_hel1(1) = helical_ind
+                CP%InitPower%ScalarPowerAmp_hel(1)=mag_amplitude_hel(helical_ind, helical_amp)*psconst(8)*&
+                                                    (Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2
+                CP%InitPower%CorrType_hel = 4
+             end if                
+          end if
+          
+       end if 
 
-         end if
-
-    else if(CP%WantVectors) then 
+    else if(CP%WantVectors) then
 
        if(magmode == mag_compensated) then
-            !Choose wheter to use the fitting functions or not
-            if(magind .ge. -1.5d0) then
-                if (Feedbacklevel>1) write(*,*) "USING FITTING FUNCTION"
-                CP%InitPower%CorrType = 4 !VECTOR
-                CP%InitPower%ScalarPowerAmp(1)= mag_amplitude(magind, magamp)* psconst(4)
-                CP%InitPower%an(1) = magind
-            else
-                if (Feedbacklevel>1) write(*,*) "Using Table for integrals"
+         vec_sig0 = 0._dl
+         delb = 0._dl ! Set up perturbations
+         pib = 1._dl
+         CP%WantVectors = .true.
+         
+           if(magind < -2.d0) then !check
+                !if (Feedbacklevel>1) 
+                write(*,*) "Using Table for non-helical P_Svpp integrals"
                 CP%InitPower%CorrType = 0
                 CP%InitPower%an(1) = 1._dl + 2._dl*(3 + magind)
-                CP%InitPower%ScalarPowerAmp(1)= mag_psamp(magind, magamp, 4)
-            end if
-            vec_sig0 = 0._dl
-            delb = 0._dl ! Set up perturbations
-            pib = 1._dl
-            CP%WantVectors = .true.
+                CP%InitPower%ScalarPowerAmp(1) = mag_psamp(magind, magamp, 4)
+                !write(*,*) "non-helical mag_amplitude_hel = ", mag_amplitude(magind, magamp) !useless,check
+                !write(*,*) "CP%InitPower%an(1) = ", CP%InitPower%an(1) !useless,check
+                !write(*,*) " CP%InitPower%ScalarPowerAmp(1)= ",  CP%InitPower%ScalarPowerAmp(1) !useless,check
+                write(*,*) "CP%InitPower%CorrType = ", CP%InitPower%CorrType !useless,check
+           else
+                CP%InitPower%CorrType = 5
+                if (Feedbacklevel>1) write(*,*) "USING FITTING FUNCTION for non-helical P_Svpp integrals"
+                CP%InitPower%ScalarPowerAmp(1) = mag_amplitude(magind, magamp)* psconst(4)
+                CP%InitPower%an(1) = magind
+                write(*,*) "CP%InitPower%CorrType = ", CP%InitPower%CorrType !useless,check
+           end if
+           
+           if(do_helical) then
+             if(helical_ind < -2.d0) then !check
+                write(*,*) "Using interpolation TABLE for helical P_Avpp part"
+                CP%InitPower%CorrType_hel = 0
+                CP%InitPower%an_hel1(1) = 1.d0 + 2.d0*(3.d0+helical_ind)
+                CP%InitPower%ScalarPowerAmp_hel(1) = mag_psamp_hel(helical_ind, helical_amp, 9)
+                !write(*,*) "helical mag_amplitude_hel = ", mag_amplitude_hel(helical_ind, helical_amp) !useless,check
+                !write(*,*) "CP%InitPower%an_hel1(1) = ", CP%InitPower%an_hel1(1) !useless,check
+                !write(*,*) " CP%InitPower%ScalarPowerAmp_hel(1)= ",  CP%InitPower%ScalarPowerAmp_hel(1) !useless,check
+             else
+!Use first fitting formula
+                write(*,*) "USING FITTING FORMULAS for helical P_Avpp part"
+                CP%InitPower%CorrType_hel = 5
+                CP%InitPower%an_hel1(1) = helical_ind
+                CP%InitPower%ScalarPowerAmp_hel(1) = mag_amplitude_hel(helical_ind, helical_amp)*psconst(9)
+                !write(*,*) "helical mag_amplitude_hel = ", mag_amplitude_hel(helical_ind, helical_amp) !useless,check
+                write(*,*) "helical CP%InitPower%CorrType_hel = ", CP%InitPower%CorrType_hel !useless,check
+                
+             end if                
+          end if 
+          
        else
           write (*,*) "There are no passive vector modes."
           return
        end if
+      
     end if
-
 
 
     ! A little debug output

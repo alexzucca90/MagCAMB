@@ -1714,23 +1714,24 @@ real(dl) initv(7,1:i_max), initvec(1:i_max)
 
         !quintessence isocurvature mode
 
-!MagCAMB: Adding Compensated Magnetic Initial Conditions
-initv(6,i_clxg)=-Rg*delb + Rg*delb*omtau/2 - (8*Rv*x2 + 9*Rg*omtau**2)*delb/48._dl  + pib*x2/3._dl
-initv(6,i_clxr)=-Rg*delb + Rg*delb*omtau/2 + (8*x2 - 9*omtau**2)*Rg*delb/48._dl - Rg*pib*x2/(3*Rv)
-initv(6,i_clxc)=-3*Rg*delb/4._dl + 3*Rg*delb*omtau/8._dl - 9/64._dl*Rg*delb*omtau**2 - x2*omtau*Rb / 40._dl
-initv(6,i_clxb)=-3*Rg*delb/4._dl + 3*Rg*delb*omtau/8._dl - 1/64._dl*delb*(8*Rv*x2 + 9*Rg*omtau**2) &
-+ pib*x2/4._dl - 55._dl / 1008._dl *Rg *x**4 *pib / (15._dl+4._dl*Rv)
-iqg = (Rv*delb - 2*pib)/3._dl * x + (1._dl+Rv*(-2._dl - 3._dl*Rb+Rv))*x*omtau*delb/(12._dl*Rg) &
-+ Rb*omtau*x*pib/(2._dl*Rg)
-initv(6,i_qg) =iqg
-initv(6,i_qr) = -(Rg*delb - 2._dl*Rg*pib/Rv)/3._dl * x + Rg*x*omtau*delb/12._dl
-initv(6,i_vb)=0.75_dl*iqg
-initv(6,i_pir)=-Rg/Rv *pib - Rg*(14._dl*Rv*delb - 55._dl*pib) / (14._dl*Rv*(15._dl+4*Rv)) * x2
-!initv(6,i_eta)=Rg*delb*omtau/4._dl + 32*Rg*Rv*delb*x**2/(192*(15+4*Rv)) - 3._dl*delb*omtau**2/64 &
-!     - 55*Rg*pib*x**2 / (168._dl*(15+4*Rv))
-initv(6,i_eta)=-Rg*delb*omtau/4._dl + Rg*Rv*delb*x2/(3._dl*(15+4*Rv)) + 3._dl*delb*omtau**2/32._dl &
-+ 55*Rg*pib*x2 / (42._dl*(15+4*Rv))
-initv(6,i_aj3r) = -Rg/Rv* 3*pib * x /7._dl - Rg*x3*delb/(7._dl *(15._dl + 4*Rv))
+        !> MGCAMB
+        !MagCAMB: Adding Compensated Magnetic Initial Conditions
+        initv(6,i_clxg)=-Rg*delb + Rg*delb*omtau/2 - (8*Rv*x2 + 9*Rg*omtau**2)*delb/48._dl  + pib*x2/3._dl
+        initv(6,i_clxr)=-Rg*delb + Rg*delb*omtau/2 + (8*x2 - 9*omtau**2)*Rg*delb/48._dl - Rg*pib*x2/(3*Rv)
+        initv(6,i_clxc)=-3*Rg*delb/4._dl + 3*Rg*delb*omtau/8._dl - 9/64._dl*Rg*delb*omtau**2 - x2*omtau*Rb / 40._dl
+        initv(6,i_clxb)=-3*Rg*delb/4._dl + 3*Rg*delb*omtau/8._dl - 1/64._dl*delb*(8*Rv*x2 + 9*Rg*omtau**2) &
+        + pib*x2/4._dl - 55._dl / 1008._dl *Rg *x**4 *pib / (15._dl+4._dl*Rv)
+        iqg = (Rv*delb - 2*pib)/3._dl * x + (1._dl+Rv*(-2._dl - 3._dl*Rb+Rv))*x*omtau*delb/(12._dl*Rg) &
+        + Rb*omtau*x*pib/(2._dl*Rg)
+        initv(6,i_qg) =iqg
+        initv(6,i_qr) = -(Rg*delb - 2._dl*Rg*pib/Rv)/3._dl * x + Rg*x*omtau*delb/12._dl
+        initv(6,i_vb)=0.75_dl*iqg
+        initv(6,i_pir)=-Rg/Rv *pib - Rg*(14._dl*Rv*delb - 55._dl*pib) / (14._dl*Rv*(15._dl+4*Rv)) * x2
+        !initv(6,i_eta)=Rg*delb*omtau/4._dl + 32*Rg*Rv*delb*x**2/(192*(15+4*Rv)) - 3._dl*delb*omtau**2/64 &
+        !     - 55*Rg*pib*x**2 / (168._dl*(15+4*Rv))
+        initv(6,i_eta)=-Rg*delb*omtau/4._dl + Rg*Rv*delb*x2/(3._dl*(15+4*Rv)) + 3._dl*delb*omtau**2/32._dl &
+        + 55*Rg*pib*x2 / (42._dl*(15+4*Rv))
+        initv(6,i_aj3r) = -Rg/Rv* 3*pib * x /7._dl - Rg*x3*delb/(7._dl *(15._dl + 4*Rv))
 
     end if
 
@@ -2277,8 +2278,9 @@ vbdot=(-adotoa*vb+cs2*k*clxb  &
 
         EV%pig = pig
     else
-!MagCAMB: adding Lorentz force in the vbdot
-vbdot=-adotoa*vb+cs2*k*clxb-photbar*opacity*(4._dl/3*vb-qg) - k/4._dl*pb43*(2*cpib - cdelb)
+        !>
+        !MagCAMB: adding Lorentz force in the vbdot
+        vbdot=-adotoa*vb+cs2*k*clxb-photbar*opacity*(4._dl/3*vb-qg) - k/4._dl*pb43*(2*cpib - cdelb)
         !vbdot=-adotoa*vb+cs2*k*clxb-photbar*opacity*(4._dl/3*vb-qg)
     end if
 
@@ -2539,10 +2541,12 @@ ayprime(7) = 0._dl
 
         polter = 0.1_dl*pig + 9._dl/15._dl*E(2)
 
-!MagCAMB: changing vbdot
-vbdot = -adotoa*vb-photbar*opacity*(4._dl/3*vb-qg) - 0.5_dl*k*photbar*pib
+        !> MaGCAMB MOD START
+        !MagCAMB: changing vbdot
+        vbdot = -adotoa*vb-photbar*opacity*(4._dl/3*vb-qg) - 0.5_dl*k*photbar*pib
 
         !vbdot = -adotoa*vb-photbar*opacity*(4._dl/3*vb-qg) - 0.5_dl*k*photbar*Magnetic
+        !< MagCAMB MOD END
 
         !  Equation for the photon heat flux stress
 
@@ -2584,11 +2588,13 @@ vbdot = -adotoa*vb-photbar*opacity*(4._dl/3*vb-qg) - 0.5_dl*k*photbar*pib
         pig = 32._dl/45._dl*k/opacity*(vb + sigma)
 
         EV%pig = pig
+
 !MagCAMB: adding stuff
 vbdot=(-adotoa*vb  -3._dl/8*pb43*k*pib  -3._dl/8*k*pb43*pig &
 - pb43/(1+pb43)/opacity*(0.75_dl*k*adotoa*pb43**2/(pb43+1)*pib + vb*&
 ( 2*pb43*adotoa**2/(1+pb43) + adotdota)) &
 )/(1+pb43)
+
         !vbdot=(-adotoa*vb  -3._dl/8*pb43*k*Magnetic  -3._dl/8*k*pb43*pig &
         !    - pb43/(1+pb43)/opacity*(0.75_dl*k*adotoa*pb43**2/(pb43+1)*Magnetic + vb*&
         !    ( 2*pb43*adotoa**2/(1+pb43) + adotdota)) &
@@ -2767,9 +2773,10 @@ rhopi=grhog_t*pig+grhor_t*pir+ grhog_t*pib
         pig = 32._dl/45._dl*k/opacity*shear
     endif
 
-!MagCAMB: adding pib
+    !> MagCAMB MOD START
+    !MagCAMB: adding pib
     rhopi=grhog_t*pig + grhog_t*pib
-
+    !< MagCAMB MOD END
 
     !  Neutrino equations:
     !  Anisotropic stress

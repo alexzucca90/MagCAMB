@@ -4,24 +4,24 @@
 FISHER=
 
 #Will detect ifort/gfortran or edit for your compiler
-ifortErr = $(shell which ifort >/dev/null; echo $$?)
-ifeq "$(ifortErr)" "0"
+#ifortErr = $(shell which ifort >/dev/null; echo $$?)
+#ifeq "$(ifortErr)" "0"
 
-#Intel compiler
+##Intel compiler
 # For OSX replace shared by dynamiclib
-F90C     = ifort
-FFLAGS = -openmp -fast -W0 -WB -fpp2 -vec_report0
-SFFLAGS = -shared -fpic
-DEBUGFLAGS = -openmp -g -check all -check noarg_temp_created -traceback -fpp -fpe0
+#F90C     = ifort
+#FFLAGS = -openmp -fast -W0 -WB -fpp2 -vec_report0
+#SFFLAGS = -shared -fpic
+#DEBUGFLAGS = -openmp -g -check all -check noarg_temp_created -traceback -fpp -fpe0
 ## This is flag is passed to the Fortran compiler allowing it to link C++ if required (not usually):
-F90CRLINK = -cxxlib
-MODOUT = -module $(OUTPUT_DIR)
-SMODOUT = -module $(DLL_DIR)
-ifneq ($(FISHER),)
-FFLAGS += -mkl
-endif
+#F90CRLINK = -cxxlib
+#MODOUT = -module $(OUTPUT_DIR)
+#SMODOUT = -module $(DLL_DIR)
+#ifneq ($(FISHER),)
+#FFLAGS += -mkl
+#endif
 
-else
+#else
 gfortErr = $(shell which gfortran >/dev/null; echo $$?)
 ifeq "$(gfortErr)" "0"
 
@@ -31,6 +31,7 @@ F90C     = gfortran
 SFFLAGS =  -shared -fPIC
 
 FFLAGS =  -O3 -fopenmp -ffast-math -fmax-errors=4
+#FFLAGS =  -O3  -fmax-errors=4
 DEBUGFLAGS = -cpp -g -fbounds-check -fbacktrace -ffree-line-length-none -fmax-errors=4 -ffpe-trap=invalid,overflow,zero
 MODOUT =  -J$(OUTPUT_DIR)
 SMODOUT = -J$(DLL_DIR)
@@ -40,7 +41,7 @@ ifneq ($(shell uname -s),Darwin)
 FFLAGS+=-march=native
 endif
 endif
-endif
+#endif
 
 IFLAG = -I
 
@@ -88,6 +89,7 @@ FITSLIB       = cfitsio
 #Location of HEALPIX for building camb_fits
 #HEALPIXDIR    ?= /usr/local/healpix
 HEALPIXDIR    ?= /Users/alexzucca/Downloads/Healpix_3.30
+
 ifneq ($(FISHER),)
 FFLAGS += -DFISHER
 EXTCAMBFILES = Matrix_utils.o

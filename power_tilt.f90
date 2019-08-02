@@ -131,8 +131,6 @@
     real(dl) ScalarPower,k, lnrat
     integer ix
 
-write(*,*) 'k = ', k
-
     lnrat = log(k/P%k_0_scalar)
     ScalarPower=P%ScalarPowerAmp(ix)*exp(lnrat*( P%an(ix)-1 + lnrat*(P%n_run(ix)/2 + P%n_runrun(ix)/6*lnrat)))
 

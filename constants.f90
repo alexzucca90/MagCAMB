@@ -1,9 +1,11 @@
 
+
     module Precision
     implicit none
 
     integer, parameter :: dl = KIND(1.d0)
     integer, parameter :: sp = KIND(1.0)
+    !integer, parameter :: qp = selected_real_kind(33, 4931) !yun check modify
     end module Precision
 
 

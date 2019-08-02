@@ -3,6 +3,8 @@
     !     See readme.html for documentation. This is a sample driver routine that reads
     !     in one set of parameters and produdes the corresponding output.
 
+!MagCAMB: modified to calculate magnetic Cls.
+
     program driver
     use IniFile
     use CAMB
@@ -38,8 +40,15 @@ use magnetic
     logical bad
 
 !MagCAMB: adding magnetic parameters
-integer magmode
-real(dl) magamp, magind, maglrat
+    ! magmode moved to power_tilt
+    !integer magmode
+    real(dl) magamp, magind, maglrat
+
+    !Helical contribution
+     !do_helical moved to power_tilt_mag
+    !logical :: do_helical = .false., maximal_hel = .false.
+    logical :: maximal_hel = .false.
+    real(dl) :: helical_amp, helical_ind
 
     InputFile = ''
     if (GetParamCount() /= 0)  InputFile = GetParam(1)
@@ -105,24 +114,42 @@ real(dl) magamp, magind, maglrat
     endif
 
     !  Read initial parameters.
-!MagCAMB: Reading initial parameters
-magmode = Ini_Read_Int('magnetic_mode', 0)
-if(magmode > 0) then
-if(magmode > 5) then
-write (*,*) "Mag mode must be 0 to 5."
-end if
-magamp =  Ini_Read_Double('magnetic_amp')
-magind =  Ini_Read_Double('magnetic_ind')
-maglrat =  Ini_Read_Double('magnetic_lrat', 0.0_dl)
-if(magmode == 1) then
-write (*,*) "Calculating compensated magnetic modes: "
-else if (magmode ==2) then
-write (*,*) "Calculating passive magnetic modes: "
-else
-write (*,*) "Calculating magnetic modes: ", magmode
-end if
-write (*,*) "Amp: ", magamp, "Ind: ", magind, "Log-rat: ", maglrat
-end if
+    !MagCAMB: Reading initial parameters
+    magmode = Ini_Read_Int('magnetic_mode', 0)
+    if(magmode > 0) then
+        if(magmode > 3) then
+            write (*,*) "Mag mode must be 0 to 2."
+            stop
+        end if
+        magamp =  Ini_Read_Double('magnetic_amp')
+        magind =  Ini_Read_Double('magnetic_ind')
+        maglrat =  Ini_Read_Double('magnetic_lrat', 0.0_dl)
+        if(magmode == 1) then
+            write (*,*) "Calculating compensated magnetic modes: "
+        else if (magmode ==2) then
+            write (*,*) "Calculating passive magnetic modes: "
+        else
+            write (*,*) "Calculating magnetic modes: ", magmode
+        end if
+        write (*,*) "Amp: ", magamp, "Ind: ", magind, "Log-rat: ", maglrat
+
+        ! AZ: May17,check
+        !Helical Contribution
+        do_helical = Ini_Read_Logical('do_helical', .false.)
+        if(do_helical) then
+            write(*,*) "Doing helical PMFs!"
+            maximal_hel = Ini_Read_Logical('maximal_hel', .true.)
+            if(maximal_hel) then
+                helical_ind = magind
+                helical_amp = magamp*sqrt(GAMMA((helical_ind+4.d0)/2.d0)/GAMMA((magind+3.d0)/2.d0))
+            else
+                helical_amp = Ini_Read_Double('helical_amp', 5.d0)
+                helical_ind = Ini_Read_Double('helical_ind', -2.9d0)
+            end if
+            write(*,*) "Computing helical contributions: "
+            write(*,*) "Hel Amp = ", helical_amp, "Hel Ind = ", helical_ind
+        end if
+    end if
 
     call DarkEnergy_ReadParams(DefIni)
 
@@ -345,12 +372,13 @@ end if
 !MagCAMB: switch for magentic fields Cls
 !---- No Magnetic Fields: ----
 if(magmode==0) then
-
+!write(*,*) "Calling CAMB_GetResults.."
     if (global_error_flag==0) call CAMB_GetResults(P)
     if (global_error_flag/=0) then
         write(*,*) 'Error result '//trim(global_error_message)
         error stop
     endif
+!write(*,*) "..done."
 
     if (P%PK_WantTransfer) then
         call Transfer_SaveToFiles(MT,TransferFileNames)
@@ -377,7 +405,7 @@ if(magmode==0) then
 else if(magmode==1 .or. magmode==2) then !Use magnetic to compute COMPENSATED and PASSIVE modes.
 
     if(P%WantCls) then
-        call mag_cls(P, magmode, magamp, magind, maglrat)
+        call mag_cls(P, magmode, magamp, magind, maglrat, helical_amp, helical_ind)
 
         call output_cl_files(ScalarFileName, ScalarCovFileName, TensorFileName, TotalFileName, &
                                 LensedFileName, LensedTotFilename, output_factor)
@@ -386,6 +414,9 @@ else if(magmode==1 .or. magmode==2) then !Use magnetic to compute COMPENSATED an
             call output_veccl_files(VectorFileName, output_factor)
         end if
 
+#ifdef WRITE_FITS
+        if (FITSfilename /= '') call WriteFitsCls(FITSfilename, CP%Max_l)
+#endif
 
     end if
 end if

@@ -2294,7 +2294,6 @@
     real(dl) ctnorm,dbletmp
     real(dl) pows(CTrans%q%npoints)
     real(dl)  ks(CTrans%q%npoints),measures(CTrans%q%npoints)
-
     !For tensors we want Integral dnu/nu (nu^2-3)/(nu^2-1) Delta_l_k^2 P(k) for CP%closed
 
     do in=1,CP%InitPower%nn
@@ -2336,7 +2335,12 @@
         iCl_tensor(j, CT_Cross, in)  = iCl_tensor(j, CT_Cross, in)*dbletmp*sqrt(ctnorm)
     end do
     end do
-
+!AZ:
+!open(unit=1, file="TENSOR1.dat", status = "unknown")
+!do j=1,CTrans%ls%l0
+!	write(1,*) j, iCl_tensor(j, CT_Temp, 1)
+!end do
+!close(1)
     end subroutine CalcTensCls
 
 
@@ -2383,6 +2387,15 @@
         iCl_vector(j, CT_Cross, in)  = iCl_vector(j, CT_Cross, in)*dbletmp*sqrt(lfac*ctnorm)
     end do
     end do
+
+! AZ: test
+
+do q_ix = 1, CTrans%q%npoints
+
+
+end do
+
+!
 
     end subroutine CalcVecCls
 
