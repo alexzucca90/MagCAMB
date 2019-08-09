@@ -276,7 +276,7 @@ function IntSDD(x,y)
         if (x .le. 0.5) then !n=-1.55
             IntSDD = (x**(2.9_dl))*( sp1*lx9 + sp2*lx8 + sp3*lx7 + sp4*lx6 +& 
                 sp5*lx5 + sp6*lx4 + sp7*lx3 + sp8*lx2 + sp9*lx + sp10)
-            ! write(*,*) "non-he,t, IntSDD  = ", x, IntSDD  ! good          
+            !write(*,*) "non-he,t, IntSDD  = ", x, IntSDD  ! good          
         else !t>0.5
             write(*,*) "Fitting functions not computed for t>0.5"
             stop
@@ -362,26 +362,32 @@ function IntSDDH(x,y)
   
 !!!!!!!!!!!!! n=-1.005
 !!!!!! t<0.0014
-!Linear model Poly9:
-  !   f(x) = hhddp1*x9 + hhddp2*x8 + hhddp3*x7 + hhddp4*x6 + 
-  !                  hhddp5*x5 + hhddp6*x4 + hhddp7*x3 + hhddp8*x2 + hhddp9*x + hhddp10
+  !General model:
+   !  f(x) = hhddp4*x6 + hhddp5*x5 + hhddp6*x4 + hhddp7*x3 + hhddp8*x^(3.8)
 !Coefficients (with 95% confidence bounds):
-       real(dl) :: hhddp1 =   4.513e+12 ! (-1.477e+14, 1.567e+14)
-       real(dl) :: hhddp2 =  -6.763e+10  !(-1.022e+12, 8.866e+11)
-       real(dl) :: hhddp3 =   2.728e+08  !(-2.23e+09, 2.775e+09)
-       real(dl) :: hhddp4 =   -4.99e+05  !(-4.058e+06, 3.06e+06)
-       real(dl) :: hhddp5 =       464.3  !(-2510, 3438)
-       real(dl) :: hhddp6 =       2.907  !(1.429, 4.386)
-       real(dl) :: hhddp7 =       -2.02  !(-2.021, -2.02)
-       real(dl) :: hhddp8 =  -1.045e-08  !(-7.273e-08, 5.183e-08)
-       real(dl) :: hhddp9 =   4.597e-13  !(-3.267e-12, 4.187e-12)
-       real(dl) :: hhddp10 =  -1.941e-18  !(-2.613e-17, 2.225e-17)
+       real(dl) :: hhddp4 =      0.1576 ! (0.1211, 0.194)
+       real(dl) :: hhddp5 =     -0.7739  !(-0.7821, -0.7656)
+       real(dl) :: hhddp6 =       2.949  !(2.947, 2.951)
+       real(dl) :: hhddp7 =       -2.02  !(-2.02, -2.02)
+       real(dl) :: hhddp8 =     0.06198  !(0.06101, 0.06295)
 
 !Goodness of fit:
- ! SSE: 4.449e-30
+ ! SSE: 1.859e-18
   !R-square: 1
-  !Adjusted R-square: 1
-  !RMSE: 1.154e-16
+  !djusted R-square: 1
+  !RMSE: 1.732e-11
+  
+  !General model:
+  !   f(x) = -hhdda*x3 -hhddb*x**(2.93_dl)
+!Coefficients (with 95% confidence bounds):
+   !    real(dl) :: hhdda =      0.7495 ! (-5.639, 7.138)
+    !   real(dl) :: hhddb =       0.408  !(-3.612, 4.428)
+
+!Goodness of fit:
+ ! SSE: 1.147e-16
+  !R-square: 0.884
+  !Adjusted R-square: 0.8837
+  !RMSE: 5.685e-10
   
 !!!!!t> 0.0014 
 !Linear model Poly9:
@@ -439,13 +445,13 @@ function IntSDDH(x,y)
         end if
     else if (y == -1) then
         if (x .le. 0.0014) then
-            IntSDDH = hhddp1*x9 + hhddp2*x8 + hhddp3*x7 + hhddp4*x6 +& 
-                    hhddp5*x5 + hhddp6*x4 + hhddp7*x3 + hhddp8*x2 + hhddp9*x + hhddp10
+            IntSDDH = (hhddp4*x6 + hhddp5*x5 + hhddp6*x4 + hhddp7*x3 + hhddp8*x**(3.8_dl))
+            ! -hhdda*x3 -hhddb*x**(2.93_dl) 
             !write(*,*) "helic,t, IntSDDH  = ", x, IntSDDH   ! good  
         else if ( x .GE. 0.0014 .and. x .le. 0.5) then  
             IntSDDH =  hhdd2p1*x9 + hhdd2p2*x8 + hhdd2p3*x7 + hhdd2p4*x6 +& 
                     hhdd2p5*x5 + hhdd2p6*x4 + hhdd2p7*x3 + hhdd2p8*x2 + hhdd2p9*x + hhdd2p10 
-           ! write(*,*) "helic,2, IntSDDH  = ", x, IntSDDH   !good
+            !write(*,*) "helic,2, IntSDDH  = ", x, IntSDDH   !good
         else !t>0.5
             write(*,*) "Fitting functions not computed for t>0.5"
             stop
@@ -505,7 +511,6 @@ function IntSPP(x,y)
        real(dl) :: sp1p3 =  -4.718e+08  !(-7.293e+08, -2.144e+08)
        real(dl) :: sp1p4 =   6.421e+04  !(3.334e+04, 9.508e+04)
        real(dl) :: sp1p5 =       10.88  !(9.672, 12.1)
-
 !Goodness of fit:
  ! SSE: 5.663
   !R-square: 0.7579
@@ -575,27 +580,7 @@ function IntSPP(x,y)
   !RMSE: 0.002439
   
 !!!!!!!  N=-0.005
-!!!! t< 0.0018 
-  !Linear model Poly8:
-  !   f(x) = ssspp1*x8 + ssspp2*x7 + ssspp3*x6 + ssspp4*x5 + 
-   !                 ssspp5*x4 + ssspp6*x3 + ssspp7*x2 + ssspp8*x + ssspp9
-!Coefficients (with 95% confidence bounds):
-    !   real(dl) :: ssspp1 =  -3.279e+17  !(-1.026e+18, 3.7e+17)
-     !  real(dl) :: ssspp2 =   3.134e+15  !(-2.246e+15, 8.513e+15)
-      ! real(dl) :: ssspp3 =  -1.246e+13  !(-2.953e+13, 4.6e+12)
-       !real(dl) :: ssspp4 =   2.667e+10  !(-2.009e+09, 5.535e+10)
-       !real(dl) :: ssspp5 =  -3.304e+07  !(-6.04e+07, -5.688e+06)
-       !real(dl) :: ssspp6 =    2.36e+04  !(8949, 3.825e+04)
-       !real(dl) :: ssspp7 =       -8.96  !(-13, -4.923)
-       !real(dl) :: ssspp8 =    0.001397  !(0.000948, 0.001845)
-       !real(dl) :: ssspp9 =  -7.725e-10  !(-1.364e-08, 1.209e-08)
-
-!Goodness of fit:
- ! SSE: 2.272e-15
-  !R-square: 0.8147
-  !Adjusted R-square: 0.7878
-  !RMSE: 6.427e-09
-  
+!!!! t< 0.0018  
   !General model:
   !   f(x) = ssspp1*x6 + sssp2*x5 + sssp3*x4 + sssp4*x3
 !Coefficients (with 95% confidence bounds):
@@ -682,9 +667,7 @@ function IntSPP(x,y)
     else if (y==0) then
         if (x .le. 0.0018) then
            IntSPP = ssspp1*x6 + ssspp2*x5 + ssspp3*x4 + ssspp4*x3
-          ! ssspp1*x8 + ssspp2*x7 + ssspp3*x6 + ssspp4*x5 + &
-           !         ssspp5*x4 + ssspp6*x3 + ssspp7*x2 + ssspp8*x + ssspp9
-           !write(*,*) "non-he,t, IntSPP  = ", x, IntSPP !good, small check 
+          ! write(*,*) "non-he,t, IntSPP  = ", x, IntSPP !good, 
         else if ( x .GE. 0.0018 .and. x .le. 0.5) then
            IntSPP = sssp2p1*x9 + sssp2p2*x8 + sssp2p3*x7 + sssp2p4*x6 +&
                     sssp2p5*x5 + sssp2p6*x4 + sssp2p7*x3 + sssp2p8*x2 + sssp2p9*x + sssp2p10
@@ -776,27 +759,23 @@ function IntSPPH(x,y)
 
 !!!!!!!!!!!!! n=-1.005
 !!! t<0.00595
-!Linear model Poly9:
- !    f(x) = hhsp1*x9 + hhsp2*x8 + hhsp3*x7 + hhsp4*x6 + 
-  !                  hhsp5*x5 + hhsp6*x4 + hhsp7*x3 + hhsp8*x2 + hhsp9*x + hhsp10
+! t vs tp 
+ !General model:
+   !  f(x) = hhsp3*x7 + hhsp4*x6 + hhsp5*x5 + hhsp6*x4 + hhsp7*x3 + hhsp8*x**(3.8_dl)
 !Coefficients (with 95% confidence bounds):
-       real(dl) :: hhsp1 =   3.735e+10 ! (-6.526e+10, 1.399e+11)
-       real(dl) :: hhsp2 =  -1.047e+09  !(-3.77e+09, 1.676e+09)
-       real(dl) :: hhsp3 =   1.234e+07  !(-1.791e+07, 4.259e+07)
-       real(dl) :: hhsp4 =  -7.955e+04  !(-2.62e+05, 1.029e+05)
-       real(dl) :: hhsp5 =       307.7  !(-340, 955.4)
-       real(dl) :: hhsp6 =      -3.836  !(-5.206, -2.466)
-       real(dl) :: hhsp7 =       4.041  !(4.04, 4.043)
-       real(dl) :: hhsp8 =  -6.123e-07  !(-1.655e-06, 4.303e-07)
-       real(dl) :: hhsp9 =   1.826e-10  !(-7.748e-11, 4.426e-10)
-       real(dl) :: hhsp10 =   1.601e-12  !(1.592e-12, 1.61e-12)
+       real(dl) :: hhsp3 =      0.7147  !(0.3985, 1.031)
+       real(dl) :: hhsp4 =     -0.4131  !(-0.4933, -0.3328)
+       real(dl) :: hhsp5 =       0.387  !(0.3753, 0.3986)
+       real(dl) :: hhsp6 =      -2.967  !(-2.97, -2.965)
+       real(dl) :: hhsp7 =        4.04  !(4.04, 4.04)
+       real(dl) :: hhsp8 =    -0.06261  !(-0.06381, -0.06142)
 
 !Goodness of fit:
- ! SSE: 3.066e-24
+ ! SSE: 2.582e-18
   !R-square: 1
   !Adjusted R-square: 1
- ! RMSE: 6.237e-14
- 
+  !RMSE: 2.047e-11
+
 !!!! t>0.00595 
 !Linear model Poly9:
   !   f(x) = hhs2p1*x9 + hhs2p2*x8 + hhs2p3*x7 + hhs2p4*x6 + 
@@ -849,8 +828,9 @@ function IntSPPH(x,y)
         end if
     else if (y == -1) then
         if (x .le. 0.00595) then
-            IntSPPH = hhsp1*x9 + hhsp2*x8 + hhsp3*x7 + hhsp4*x6 + hhsp5*x5&
-                      + hhsp6*x4 + hhsp7*x3 + hhsp8*x2 + hhsp9*x + hhsp10
+            IntSPPH = (hhsp3*x7 + hhsp4*x6 + hhsp5*x5 + hhsp6*x4 + hhsp7*x3 + hhsp8*x**(3.8_dl))
+           ! hhsp1*x9 + hhsp2*x8 + hhsp3*x7 + hhsp4*x6 + hhsp5*x5&
+            !          + hhsp6*x4 + hhsp7*x3 + hhsp8*x2 + hhsp9*x + hhsp10
             !write(*,*) "he,t, IntSPPH  = ", x, IntSPPH  !good
         else if ( x .GE. 0.00595 .and. x .le. 0.5) then
             IntSPPH = hhs2p1*x9 + hhs2p2*x8 + hhs2p3*x7 + hhs2p4*x6 + hhs2p5*x5&
@@ -1081,26 +1061,24 @@ function IntSDPH(x,y)
 
 !!!!!!!!!!!!! n=-1.005
 !!!T<0.004 
-!Linear model Poly9:
-  !   f(x) = hhdp1*x9 + hhdp2*x8 + hhdp3*x7 + hhdp4*x6 +&
-   !                 hhdp5*x5 + hhdp6*x4 + hhdp7*x3 + hhdp8*x2 + hhdp9*x + hhdp10
+ 
+ !t vs tp General model:
+ 
+!General model:
+   !  f(x) =hhdp4*x6 + hhdp5*x5 + hhdp6*x4 + hhdp7*x3 + hhdp8*x**(3.8_dl)
 !Coefficients (with 95% confidence bounds):
-       real(dl) :: hhdp1 =   1.268e+12  !(-7.901e+11, 3.326e+12)
-       real(dl) :: hhdp2 =  -2.487e+10  !(-6.297e+10, 1.323e+10)
-       real(dl) :: hhdp3 =   2.056e+08  !(-8.987e+07, 5.01e+08)
-       real(dl) :: hhdp4 =  -9.304e+05  !(-2.175e+06, 3.146e+05)
-       real(dl) :: hhdp5 =        2507  !(-585.5, 5599)
-       real(dl) :: hhdp6 =      -2.554  !(-7.142, 2.033)
-       real(dl) :: hhdp7 =    0.003999  !(7.28e-05, 0.007925)
-       real(dl) :: hhdp8 =  -2.104e-06  !(-3.864e-06, -3.443e-07)
-       real(dl) :: hhdp9 =   5.063e-10  !(1.756e-10, 8.37e-10)
-       real(dl) :: hhdp10 =   7.703e-13  !(7.546e-13, 7.86e-13)
+       real(dl) :: hhdp4 =     0.01238 ! (0.009807, 0.01495)
+       real(dl) :: hhdp5 =     -0.5847  !(-0.5853, -0.5842)
+       real(dl) :: hhdp6 =       1.466  !(1.466, 1.466)
+       real(dl) :: hhdp7 =  -3.145e-05  !(-3.189e-05, -3.101e-05)
+       real(dl) :: hhdp8 =     0.03053  !(0.03046, 0.0306)
 
+p2*x^(3.9)-p3*x^(5)+p4*x^(6.7)+p1*x^(4.7)-p5*x^4-p6*x^(4.1)+p7*x^(3.7)
 !Goodness of fit:
-  !SSE: 6.586e-25
+ ! SSE: 8.871e-21
   !R-square: 1
   !Adjusted R-square: 1
- ! RMSE: 3.927e-14
+  !RMSE: 1.217e-12
 
 !!!! T>0.004 
 !Linear model Poly9:
@@ -1150,9 +1128,11 @@ function IntSDPH(x,y)
         end if
     else if (y == -1) then
         if (x .le. 0.004) then
-            IntSDPH = hhdp1*x9 + hhdp2*x8 + hhdp3*x7 + hhdp4*x6 +&
-                    hhdp5*x5 + hhdp6*x4 + hhdp7*x3 + hhdp8*x2 + hhdp9*x + hhdp10
-            !write(*,*) "he,t, IntSDPH  = ", x, IntSDPH   ! good,  
+            IntSDPH = hhdp4*x6 + hhdp5*x5 + hhdp6*x4 + hhdp7*x3 + hhdp8*x**(3.8_dl)
+            !hhdp5*x5 + hhdp6*x4 + hhdp7*x3
+            ! hhdp1*x9 + hhdp2*x8 + hhdp3*x7 + hhdp4*x6 +&
+             !       hhdp5*x5 + hhdp6*x4 + hhdp7*x3 + hhdp8*x2 + hhdp9*x + hhdp10
+           ! write(*,*) "he,t, IntSDPH  = ", x, IntSDPH   ! good,  check back negetive 
         else if ( x .GE. 0.004 .and. x .le. 0.5) then
             IntSDPH = hhd2p1*x9 + hhd2p2*x8 + hhd2p3*x7 + hhd2p4*x6 +& 
                     hhd2p5*x5 + hhd2p6*x4 + hhd2p7*x3 + hhd2p8*x2 + hhd2p9*x + hhd2p10
