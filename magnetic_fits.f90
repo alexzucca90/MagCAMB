@@ -329,12 +329,17 @@ end function mag_psamp_hel
                     CP%InitPower%CorrType_hel = 0
                     CP%InitPower%TensorPowerAmp_hel(1) = mag_psamp_hel(helical_ind, helical_amp,10)&
                                                        *(3._dl*Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2 
+                    CP%InitPower%TensorPowerAmp_odd(1) = mag_psamp_hel(helical_ind, helical_amp,12)&
+                                                       *(3._dl*Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2 
+                               
                     CP%InitPower%ant_hel1(1) = 2.d0*(helical_ind +3.d0)
                     write(*,*) "Using interpolation TABLE for helical P_tpp"
                 else 
                     write(*,*) "Using fitting functions for helical P_tpp" 
                     CP%InitPower%ant_hel1(1) = helical_ind
                     CP%InitPower%TensorPowerAmp_hel(1) = mag_amplitude_hel(helical_ind, helical_amp)*psconst(10)&
+                                                       *(3._dl*Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2
+                    CP%InitPower%TensorPowerAmp_odd(1) = mag_amplitude_hel(helical_ind, helical_amp)*psconst(12)&
                                                        *(3._dl*Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2
                     CP%InitPower%CorrType_hel = 6 
                 end if
@@ -368,12 +373,14 @@ end function mag_psamp_hel
                 if(helical_ind < -2.d0) then
                     CP%InitPower%CorrType_hel = 0
                     CP%InitPower%TensorPowerAmp_hel(1)=mag_psamp_hel(helical_ind, helical_amp,10) 
+                    CP%InitPower%TensorPowerAmp_odd(1)=mag_psamp_hel(helical_ind, helical_amp,12) 
                     CP%InitPower%ant_hel1(1) = 2.d0*(helical_ind +3.d0)
                     write(*,*) "Using interpolation TABLE for helical passive P_tpp"
                 else 
                     write(*,*) "Using fitting functions for helical passive P_tpp" 
                     CP%InitPower%ant_hel1(1) = helical_ind
                     CP%InitPower%TensorPowerAmp_hel(1)=mag_amplitude_hel(helical_ind, helical_amp)*psconst(10)
+                    CP%InitPower%TensorPowerAmp_odd(1)=mag_amplitude_hel(helical_ind, helical_amp)*psconst(12)
                     CP%InitPower%CorrType_hel = 7
                 end if
              end if
@@ -565,6 +572,7 @@ end function mag_psamp_hel
                 CP%InitPower%CorrType_hel = 0
                 CP%InitPower%an_hel1(1) = 1.d0 + 2.d0*(3.d0+helical_ind)
                 CP%InitPower%ScalarPowerAmp_hel(1) = mag_psamp_hel(helical_ind, helical_amp, 9)
+                CP%InitPower%VectorPowerAmp_odd(1) = mag_psamp_hel(helical_ind, helical_amp, 11)
                 !write(*,*) "helical mag_amplitude_hel = ", mag_amplitude_hel(helical_ind, helical_amp) !useless,check
                 !write(*,*) "CP%InitPower%an_hel1(1) = ", CP%InitPower%an_hel1(1) !useless,check
                 !write(*,*) " CP%InitPower%ScalarPowerAmp_hel(1)= ",  CP%InitPower%ScalarPowerAmp_hel(1) !useless,check
@@ -574,6 +582,7 @@ end function mag_psamp_hel
                 CP%InitPower%CorrType_hel = 5
                 CP%InitPower%an_hel1(1) = helical_ind
                 CP%InitPower%ScalarPowerAmp_hel(1) = mag_amplitude_hel(helical_ind, helical_amp)*psconst(9)
+                CP%InitPower%VectorPowerAmp_odd(1) = mag_amplitude_hel(helical_ind, helical_amp)*psconst(11)
                 !write(*,*) "helical mag_amplitude_hel = ", mag_amplitude_hel(helical_ind, helical_amp) !useless,check
                 write(*,*) "helical CP%InitPower%CorrType_hel = ", CP%InitPower%CorrType_hel !useless,check
                 

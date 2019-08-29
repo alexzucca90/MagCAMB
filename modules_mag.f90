@@ -1047,12 +1047,12 @@ real(dl) :: tens0 = 1._dl
 
     integer, parameter :: C_Temp = 1, C_E = 2, C_Cross =3, C_Phi = 4, C_PhiTemp = 5, C_PhiE=6
     integer :: C_last = C_PhiE
-    integer, parameter :: CT_Temp =1, CT_E = 2, CT_B = 3, CT_Cross=  4
+    integer, parameter :: CT_Temp =1, CT_E = 2, CT_B = 3, CT_Cross= 4,CT_Cross1= 5,CT_Cross2= 6!YUN
     integer, parameter :: name_tag_len = 12
     character(LEN=name_tag_len), dimension(C_PhiE), parameter :: C_name_tags = ['TT','EE','TE','PP','TP','EP']
-    character(LEN=name_tag_len), dimension(CT_Cross), parameter :: CT_name_tags = ['TT','EE','BB','TE']
+    !character(LEN=name_tag_len), dimension(CT_Cross), parameter :: CT_name_tags = ['TT','EE','BB','TE']
+    character(LEN=name_tag_len), dimension(CT_Cross2), parameter :: CT_name_tags = ['TT','EE','BB','TE','TB','EB']!YUN
     character(LEN=name_tag_len), dimension(7), parameter :: lens_pot_name_tags = ['TT','EE','BB','TE','PP','TP','EP']
-
 
     logical :: has_cl_2D_array = .false.
 
@@ -1171,14 +1171,16 @@ real(dl) :: tens0 = 1._dl
 
     if (CP%WantVectors) then
         if (allocated(Cl_vector)) deallocate(Cl_vector)
-        allocate(Cl_vector(lmin:CP%Max_l, CP%InitPower%nn, CT_Temp:CT_Cross))
+        !allocate(Cl_vector(lmin:CP%Max_l, CP%InitPower%nn, CT_Temp:CT_Cross))
+        allocate(Cl_vector(lmin:CP%Max_l, CP%InitPower%nn, CT_Temp:CT_Cross2))!YUN
         Cl_vector = 0
     end if
 
 
     if (CP%WantTensors) then
         if (allocated(Cl_tensor)) deallocate(Cl_tensor)
-        allocate(Cl_tensor(lmin:CP%Max_l_tensor, CP%InitPower%nn, CT_Temp:CT_Cross))
+        !allocate(Cl_tensor(lmin:CP%Max_l_tensor, CP%InitPower%nn, CT_Temp:CT_Cross))
+        allocate(Cl_tensor(lmin:CP%Max_l_tensor, CP%InitPower%nn, CT_Temp:CT_Cross2))!YUN
         Cl_tensor = 0
     end if
 
@@ -1281,7 +1283,7 @@ real(dl) :: tens0 = 1._dl
         unit = open_file_header(TensFile, 'L', CT_name_tags)
         do in=1,CP%InitPower%nn
             do il=lmin,CP%Max_l_tensor
-                write(unit,'(1I6,4E15.5)')il, fact*Cl_tensor(il, in, CT_Temp:CT_Cross)
+                write(unit,'(1I6,6E15.5)')il, fact*Cl_tensor(il, in, CT_Temp:CT_Cross2)!YUN,CT_Cross), 4E15.5
             end do
         end do
         close(unit)
@@ -1398,7 +1400,7 @@ real(dl) :: tens0 = 1._dl
         unit =  open_file_header(VecFile, 'L', CT_name_tags)
         do in=1,CP%InitPower%nn
             do il=lmin,CP%Max_l
-                write(unit,'(1I6,4E15.5)')il, fact*Cl_vector(il, in, CT_Temp:CT_Cross)
+                write(unit,'(1I6,6E15.5)')il, fact*Cl_vector(il, in, CT_Temp:CT_Cross2)!YUN,CT_Cross), 4E15.5
             end do
         end do
         close(unit)
@@ -1421,8 +1423,10 @@ real(dl) :: tens0 = 1._dl
         if (CP%WantTensors) then
             if (.not.CP%WantScalars) Norm = 1/Cl_tensor(lnorm,in, C_Temp)
             !Otherwise Norm already set correctly
-            Cl_tensor(lmin:CP%Max_l_tensor, in, CT_Temp:CT_Cross) =  &
-                Cl_tensor(lmin:CP%Max_l_tensor, in, CT_Temp:CT_Cross) * Norm
+            Cl_tensor(lmin:CP%Max_l_tensor, in, CT_Temp:CT_Cross2) =  &
+                Cl_tensor(lmin:CP%Max_l_tensor, in, CT_Temp:CT_Cross2) * Norm!YUN
+           ! Cl_tensor(lmin:CP%Max_l_tensor, in, CT_Temp:CT_Cross) =  &
+            !    Cl_tensor(lmin:CP%Max_l_tensor, in, CT_Temp:CT_Cross) * Norm
         end if
     end do
 
