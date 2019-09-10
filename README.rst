@@ -38,4 +38,5 @@ CAMB_sources is the updated public `CAMB Sources <http://camb.info/sources/>`_ c
 Helical
 =============================
 
-This version code contains parity odd correlation functions for Cl_EB and Cl_TB.
+This helical branch contains parity odd correlation functions for Cl_EB and Cl_TB.
+and non-helical and helical magnetic fields contributions to Cl_TT,EE,BB,TE for spectral index n <-2, n=-2, -1.5, -1, 0, 1, 2, 3 as well. 
