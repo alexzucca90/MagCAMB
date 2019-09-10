@@ -79,11 +79,10 @@
         real(dl) k_0_scalar, k_0_tensor !pivot scales
         real(dl) ScalarPowerAmp(nnmax)
         real(dl) TensorPowerAmp(nnmax) !A_T at k_0_tensor if tensor_parameterization==tensor_param_AT       
-!new added check   Yun      
+!new added check         
         real(dl) an_hel1(nnmax) !spectral index for helical contribution in scalar and vector 
         real(dl) ant_hel1(nnmax) ! spectral index for helical contribution tensor 
-        real(dl) TensorPowerAmp_odd(nnmax)
-        real(dl) VectorPowerAmp_odd(nnmax)        
+   
         real(dl) ScalarPowerAmp_hel(nnmax)
         real(dl) TensorPowerAmp_hel(nnmax) ! 
         !MagCAMB: adding two new parameters..
@@ -107,11 +106,11 @@ integer, public :: magmode
 logical, public :: do_helical
     !Make things visible as neccessary...
 
-    public InitialPowerParams, InitialPower_ReadParams, InitializePowers, ScalarPower, TensorPower, TensorPowerOdd,VectorPowerOdd
+    public InitialPowerParams, InitialPower_ReadParams, InitializePowers, ScalarPower, TensorPower
     public nnmax,Power_Descript, Power_Name, SetDefPowerParams
 
 !-------check 
-    public IntSDD, IntSPP, IntSDP, IntSDDH, IntSPPH, IntSDPH, IntVPP, IntVPPH, IntTPP, IntTPPH, IntTPPM,IntVPPM
+    public IntSDD, IntSPP, IntSDP, IntSDDH, IntSPPH, IntSDPH, IntVPP, IntVPPH, IntTPP, IntTPPH
 
     contains
 
@@ -1557,191 +1556,6 @@ function IntVPPH(x,y)
 
 end function IntVPPH
 
-
-          !-------- Helical VECTOR --ODD FUNCTION -----------
-function IntVPPM(x,y)
-    implicit none
-    !variables
-    real(dl) :: IntVPPM, x, y
-    real(dl) :: x2, x3, x4, x5, x6, x7, x8, x9,x10,x11,x12
-  
-!!!!!!!!!!!!!!!!T VS P, x=t, y=p ,N=-2.05
-!Linear model Poly3:
-  !   f(x) = hmvp1*x3 + hmvp2*x2 + hmvp3*x + hmvp4
-!Coefficients (with 95% confidence bounds):
-       real(dl) ::  hmvp1 =     -0.5635  !(-0.6883, -0.4388)
-       real(dl) ::  hmvp2 =    0.007785  !(-0.07843, 0.094)
-       real(dl) ::  hmvp3 =    -0.04417  !(-0.05912, -0.02922)
-       real(dl) ::  hmvp4 =        1.42  !(1.42, 1.421)
-
-!Goodness of fit:
- ! SSE: 0.05905
-  !R-square: 0.9406
-  !Adjusted R-square: 0.9405
-  !RMSE: 0.006109
-
-!!!!!!!!!!!!!!!!T VS P, x=t, y=tp ,N=-1.55
-!General model:
- !    f(x) = hhmvp00*x12+hhmvp*x11+hhmvp0*x10+hhmvp1*x9 + hhmvp2*x8 + hhmvp3*x7 + hhmvp4*x6 + hhmvp5*x5 + hhmvp6*x4 + hhmvp7*x3
-!Coefficients (with 95% confidence bounds):
-    !   real(dl) ::  hhmvp =   1.019e+04 ! (9692, 1.069e+04)
-     !  real(dl) ::  hhmvp0 =  -1.367e+04 ! (-1.427e+04, -1.306e+04)
-      ! real(dl) ::  hhmvp00 =       -3336 ! (-3513, -3159)
-      ! real(dl) ::  hhmvp1 =   1.058e+04  !(1.016e+04, 1.1e+04)
-      ! real(dl) ::  hhmvp2 =       -5223  !(-5406, -5041)
-       !real(dl) ::  hhmvp3 =        1719  !(1668, 1770)
-       !real(dl) ::  hhmvp4 =      -383.2  !(-392.3, -374.1)
-       !real(dl) ::  hhmvp5 =       57.96  !(56.95, 58.97)
-       !real(dl) ::  hhmvp6 =      -6.735  !(-6.797, -6.673)
-       !real(dl) ::  hhmvp7 =       1.598  !(1.597, 1.6)
-
-!Goodness of fit:
- ! SSE: 1.978e-11
-  !R-square: 1
-  !Adjusted R-square: 1
-  !sRMSE: 1.109e-07
-
-
-!!!!! General model:
-  !   f(x) = hhmvp00*x12+hhmvp*x11+hhmvp0*x10+hhmvp1*x9 + hhmvp2*x8 + hhmvp3*x7 + hhmvp4*x6 + hhmvp5*x5 
-   !                 + hhmvp6*x4 + hhmvp7*x^(2.9)
-!Coefficients (with 95% confidence bounds):
-       real(dl) ::  hhmvp =      0.8365  !(0.4364, 1.237)
-       real(dl) ::  hhmvp0 =     -0.3837  !(-0.9382, 0.1707)
-       real(dl) ::  hhmvp00 =     -0.5109  !(-0.6753, -0.3465)
-       real(dl) ::  hhmvp1 =     -0.1907  !(-0.7111, 0.3297)
-       real(dl) ::  hhmvp2 =      0.2353  !(-0.07512, 0.5457)
-       real(dl) ::  hhmvp3 =     -0.1523  !(-0.2689, -0.03569)
-       real(dl) ::  hhmvp4 =    -0.03533  !(-0.06287, -0.007799)
-       real(dl) ::  hhmvp5 =     -0.1705  !(-0.1744, -0.1666)
-       real(dl) ::  hhmvp6 =     -0.4846  !(-0.4849, -0.4843)
-       real(dl) ::  hhmvp7 =       1.033  !(1.033, 1.033)
-
-!Goodness of fit:
- ! SSE: 8.662e-15
-  !R-square: 1
-  !Adjusted R-square: 1
-  !RMSE: 2.321e-09
-
-!!!!!!!!!!!!!!!!T VS P, x=t, y=tp ,N=-1.05
-!General model:
-  !   f(x) = hhhmvp0*x10+hhhmvp1*x9 + hhhmvp2*x8 + hhhmvp3*x7 + hhhmvp4*x6 + hhhmvp5*x5 + hhhmvp6*x4 + hhhmvp7*x^(3.9)
-!Coefficients (with 95% confidence bounds):
-       real(dl) ::  hhhmvp0 =    -0.01482 ! (-0.04221, 0.01257)
-       real(dl) ::  hhhmvp1 =     0.02393  !(-0.04013, 0.08798)
-       real(dl) ::  hhhmvp2 =    -0.02896  !(-0.09261, 0.03468)
-       real(dl) ::  hhhmvp3 =    0.004042  !(-0.03109, 0.03917)
-       real(dl) ::  hhhmvp4 =    -0.02796  !(-0.03988, -0.01605)
-       real(dl) ::  hhhmvp5 =     -0.1658  !(-0.1685, -0.163)
-       real(dl) ::  hhhmvp6 =      -5.334  !(-5.335, -5.332)
-       real(dl) ::  hhhmvp7 =       5.635  !(5.634, 5.636)
-
-!Goodness of fit:
- ! SSE: 2.992e-15
-  !R-square: 1
-  !Adjusted R-square: 1
-  !RMSE: 1.737e-09
-
-!!!!!!!!!!!!!!!!T VS P, x=t, y=tp ,N=-0.05
-!General model:
-!     f(x) = hhhhmvp00*x12+hhhhmvp*x11+hhhhmvp0*x10+hhhhmvp1*x9 + hhhhmvp2*x8 + hhhhmvp3*x7 + hhhhmvp4*x6 + hhhhmvp5*x5 + hhhhmvp6*x4
-!Coefficients (with 95% confidence bounds):
-       real(dl) ::  hhhhmvp =     -0.9516 ! (-1.237, -0.6666)
-       real(dl) ::  hhhhmvp0 =      0.4823 ! (0.1551, 0.8095)
-       real(dl) ::  hhhhmvp00 =       0.495 ! (0.3882, 0.6018)
-       real(dl) ::  hhhhmvp1 =      0.3244  !(0.1135, 0.5352)
-       real(dl) ::  hhhhmvp2 =      -0.591  !(-0.6743, -0.5077)
-       real(dl) ::  hhhhmvp3 =      0.4849  !(0.4642, 0.5055)
-       real(dl) ::  hhhhmvp4 =      -0.292  !(-0.2952, -0.2889)
-       real(dl) ::  hhhhmvp5 =     -0.1788  !(-0.1791, -0.1785)
-       real(dl) ::  hhhhmvp6 =      0.2809  !(0.2809, 0.2809)
-
-!Goodness of fit:
- ! SSE: 5.313e-17
-  !R-square: 1
-  !Adjusted R-square: 1
-  !RMSE: 1.86e-10
-    x2 = x*x
-    x3 = x*x2
-    x4 = x*x3
-    x5 = x*x4
-    x6 = x*x5
-    x7 = x*x6
-    x8 = x*x7
-    x9 = x*x8
-    x10 = x*x9
-    x11 = x*x10
-    x12 = x*x11
-    
-    if (y==-2) then
-       if (x .le. 0.5) then
-            IntVPPM = (x**(2._dl*y+6._dl))*(hmvp1*x3 + hmvp2*x2 + hmvp3*x + hmvp4)
-            !write(*,*) "t, IntVPPM  = ", x, IntVPPM  
-       else !t>0.5
-            write(*,*) "Fitting functions not computed for t>0.5"
-            stop
-       end if
-    else if (y==(-1.5_dl)) then
-        if (x .le. 0.5) then
-           IntVPPM = hhmvp00*x12+hhmvp*x11+hhmvp0*x10+hhmvp1*x9 + hhmvp2*x8 &
-                    + hhmvp3*x7 + hhmvp4*x6 + hhmvp5*x5 + hhmvp6*x4 + hhmvp7*x**(2.9_dl)
-           ! hhmvp00*x12+hhmvp*x11+hhmvp0*x10+hhmvp1*x9 + hhmvp2*x8 &
-            !       + hhmvp3*x7 + hhmvp4*x6 + hhmvp5*x5 + hhmvp6*x4 + hhmvp7*x3  
-           ! write(*,*) "t, IntVPPM  = ", x, IntVPPM  
-        else !t>0.5
-            write(*,*) "Fitting functions not computed for t>0.5"
-            stop
-        end if
-    else if ( y < -0.95 .and. y .GE. -1.1) then !-1.05
-        if (x .le. 0.5) then
-           IntVPPM = hhhmvp0*x10+hhhmvp1*x9 + hhhmvp2*x8 + hhhmvp3*x7 + hhhmvp4*x6 &
-                    + hhhmvp5*x5 + hhhmvp6*x4 + hhhmvp7*x**(3.9_dl)
-           !write(*,*) "t, IntVPPM  = ", x, IntVPPM      
-        else !t>0.5
-            write(*,*) "Fitting functions not computed for t>0.5"
-            stop
-        end if
-    else if (y==0) then
-        if (x .le. 0.5) then
-           IntVPPM = hhhhmvp00*x12+hhhhmvp*x11+hhhhmvp0*x10+hhhhmvp1*x9 + hhhhmvp2*x8 &
-                     + hhhhmvp3*x7 + hhhhmvp4*x6 + hhhhmvp5*x5 + hhhhmvp6*x4 
-          ! write(*,*) "t, IntVPPM  = ", x, IntVPPM  
-        else !t>0.5
-            write(*,*) "Fitting functions not computed for t>0.5"
-            stop
-        end if
-    else if (y==1) then
-        if (x .le. 0.5) then
-            IntVPPM = (x**(2._dl*y+6._dl))*(1/(48*x) + 2/(105*x2) &
-                      - 1/(6*x3) + 2/(15*x4) + 1/378)
-        else !t>0.5
-            write(*,*) "Fitting functions not computed for t>0.5"
-            stop
-        end if  
-    else if (y==2) then
-        if (x .le. 0.5) then
-            IntVPPM = (x**(2._dl*y+6._dl))*(2/(21*x4) - 1/(144*x3) - 2/(315*x2)&
-             - 1/(6*x5) + 4/(45*x6) + 2/10395)!0.00017661736411736417
-        else !t>0.5
-            write(*,*) "Fitting functions not computed for t>0.5"
-            stop
-        end if
-    else if (y==3) then
-        if (x .le. 0.5) then
-            IntVPPM = (x**(2._dl*y+6._dl))*(1/(360*x3) + 1/(315*x4) - 1/(16*x5)&
-             + 10/(63*x6) - 1/(6*x7) + 1/(15*x8) + 0.00001761201761201766)
-        else !t>0.5
-            write(*,*) "Fitting functions not computed for t>0.5"
-            stop
-        end if
-    else  
-        write(*,*) "Fitting functions not computed for this spectral index"
-        stop        
-    end if 
-
-end function IntVPPM
-
-
 !-------- 	TENSOR  Non-Helical P -----------
 function IntTPP(x,y)
     implicit none
@@ -2160,155 +1974,6 @@ function IntTPPH(x,y)
     end if    
 end function IntTPPH
 
-          !-------- Helical TENSOR --ODD FUNCTION -----------
-function IntTPPM(x,y)
-    implicit none
-    !variables
-    real(dl) :: IntTPPM, x, y
-    real(dl) :: x2, x3, x4, x5, x6, x7, x8, x9,x10,x11
- 
-  
-!!T VS P, x=t, y=p ,N=-2.05
-!Linear model Poly2:
-    ! f(x) = tmp1*x2 + tmp2*x + tmp3
-!Coefficients (with 95% confidence bounds):
-       real(dl) :: tmp1 =     -0.9704  !(-1.193, -0.7481)
-       real(dl) :: tmp2 =      0.1932  !(0.1201, 0.2663)
-       real(dl) :: tmp3 =       5.648  !(5.645, 5.652)
-
-!Goodness of fit:
- ! SSE: 5.657
-  !R-square: 0.09452
-  !Adjusted R-square: 0.09359
-  !RMSE: 0.05399
-
- !!!!!!!!!!!!!!!!!!! T VS P, x=t, y=p , N=-1.55
-!Linear model Poly4:
-    ! f(x) = ttmp1*x4 + ttmp2*x3 + ttmp3*x2 + ttmp4*x + ttmp5
-!Coefficients (with 95% confidence bounds):
-       real(dl) :: ttmp1 =      -33.15 ! (-73.02, 6.712)
-       real(dl) :: ttmp2 =       30.39 ! (-2.448, 63.22)
-       real(dl) :: ttmp3 =      -9.664 ! (-18.2, -1.134)
-       real(dl) :: ttmp4 =       0.207  !(-0.5053, 0.9193)
-       real(dl) :: ttmp5 =       3.692  !(3.685, 3.7)
-
-!Goodness of fit:
- ! SSE: 28.28
-  !R-square: 0.501
-  !Adjusted R-square: 0.5
-  !RMSE: 0.1209
-
-!!!!!!!!!!!!!!!!!!! T VS TP, x=t, y=tp ,N=-1.05
-!General model:
- !    f(x) = tttmp00*x11+tttmp0*x10+tttmp*x9+tttmp1*x8 + tttmp2*x7 + tttmp3*x6 + tttmp4*x5 + tttmp5*x4
-!Coefficients (with 95% confidence bounds):
-       real(dl) :: tttmp =       -7841  !(-7977, -7705)
-       real(dl) :: tttmp0 =        7917  !(7761, 8073)
-       real(dl) :: tttmp00 =       -3435  !(-3510, -3360)
-       real(dl) :: tttmp1 =        4365  !(4301, 4429)
-       real(dl) :: tttmp2 =       -1502  !(-1520, -1485)
-       real(dl) :: tttmp3 =         334  !(331.1, 336.9)
-       real(dl) :: tttmp4 =      -51.41  !(-51.66, -51.16)
-       real(dl) :: tttmp5 =       7.825  !(7.816, 7.834)
-
-!Goodness of fit:
- ! SSE: 3.987e-11
- ! R-square: 1
- ! Adjusted R-square: 1
- ! RMSE: 1.413e-07
-!!!!!!!!!!!!!!!!!!!!!!!!!! T VS TP, x=t, y=tp ,N=-0.05
-!General model:
- !    f(x) = ttttmp0*x11+ttttmp*x10+ttttmp1*x9 + ttttmp2*x8 + ttttmp3*x7 + ttttmp4*x6 + ttttmp5*x5 + ttttmp6*x4
-!Coefficients (with 95% confidence bounds):
-       real(dl) :: ttttmp =       2.584  !(2.184, 2.984)
-       real(dl) :: ttttmp0 =     -0.8374 ! (-1.012, -0.6632)
-       real(dl) :: ttttmp1 =      -3.561  !(-3.946, -3.176)
-       real(dl) :: ttttmp2 =       2.932  !(2.73, 3.134)
-       real(dl) :: ttttmp3 =      -1.886  !(-1.948, -1.824)
-       real(dl) :: ttttmp4 =       0.758  !(0.7468, 0.7691)
-       real(dl) :: ttttmp5 =      -0.124  !(-0.1251, -0.123)
-       real(dl) :: ttttmp6 =      0.5606  !(0.5605, 0.5606)
-
-!Goodness of fit:
- ! SSE: 2.118e-15
-  !R-square: 1
-  !Adjusted R-square: 1
-  !RMSE: 1.109e-09
-    x2 = x*x
-    x3 = x*x2
-    x4 = x*x3
-    x5 = x*x4
-    x6 = x*x5
-    x7 = x*x6
-    x8 = x*x7
-    x9 = x*x8
-    x10 = x*x9
-    x11 = x*x10
-    
-    if (y==-2) then
-       if (x .le. 0.5) then !1.9
-            IntTPPM = (x**(2._dl*y+6._dl))*(tmp1*x2 + tmp2*x + tmp3)
-            !write(*,*) "t, IntTPPM  = ", x, IntTPPM   
-       else !t>0.5
-            write(*,*) "Fitting functions not computed for t>0.5"
-            stop
-       end if
-    else if (y==(-1.5_dl)) then
-        if (x .le. 0.5) then  
-           IntTPPM = (x**(2._dl*y+6._dl))*(ttmp1*x4 + ttmp2*x3 + ttmp3*x2 + ttmp4*x + ttmp5)
-           !write(*,*) "t, IntTPPM  = ", x, IntTPPM
-        else !t>0.5
-            write(*,*) "Fitting functions not computed for t>0.5"
-            stop
-        end if
-    else if ( y < -0.95 .and. y .GE. -1.1) then !-1.05
-        if (x .le. 0.5) then
-           IntTPPM = tttmp00*x11+tttmp0*x10+tttmp*x9+tttmp1*x8 &
-                     + tttmp2*x7 + tttmp3*x6 + tttmp4*x5 + tttmp5*x4
-           !write(*,*) "t, IntTPPM  = ", x, IntTPPM                           
-        else !t>0.5
-            write(*,*) "Fitting functions not computed for t>0.5"
-            stop
-        end if
-    else if (y==0) then
-        if (x .le. 0.5) then
-           IntTPPM = ttttmp0*x11+ttttmp*x10+ttttmp1*x9 + ttttmp2*x8 &
-                   + ttttmp3*x7 + ttttmp4*x6 + ttttmp5*x5 + ttttmp6*x4 
-          ! write(*,*) "t, IntTPPM  = ", x, IntTPPM
-        else !t>0.5
-            write(*,*) "Fitting functions not computed for t>0.5"
-            stop
-        end if
-    else if (y==1) then
-        if (x .le. 0.5) then
-           IntTPPM = (x**(2._dl*y+6._dl))*(4/(21*x2) - 5/(96*x) - 1/(6*x3)&
-                        + 4/(15*x4) - 2/45)
-        else !t>0.5
-            write(*,*) "Fitting functions not computed for t>0.5"
-            stop
-        end if  
-    else if (y==2) then
-        if (x .le. 0.5) then
-           IntTPPM = (x**(2._dl*y+6._dl))*(4/(315*x2) - 19/(288*x3) &
-                    + 16/(105*x4) - 1/(6*x5) + 8/(45*x6) - 8/1485)
-        else !t>0.5
-            write(*,*) "Fitting functions not computed for t>0.5"
-            stop
-        end if
-    else if (y==3) then
-        if (x .le. 0.5) then
-            IntTPPM = (x**(2._dl*y+6._dl))*(2/(63*x4) - 7/(1440*x3) - 3/(32*x5)&
-                      + 52/(315*x6) - 1/(6*x7) + 2/(15*x8) - 23/27027)
-        else !t>0.5
-            write(*,*) "Fitting functions not computed for t>0.5"
-            stop
-        end if
-    else  
-        write(*,*) "Fitting functions not computed for this spectral index"
-        stop        
-    end if 
-
-end function IntTPPM
 
     function ScalarPower(k,ix)
 
@@ -2427,61 +2092,6 @@ end function IntTPPM
     !         ScalarPower = ScalarPower * (1 + 0.1*cos( lnrat*30 ) )
     end function ScalarPower
 
-!========= Odd Helical Contribution  =============
- function VectorPowerOdd(k,ix)
-
-    !"ix" gives the index of the power to return for this k
-    !ScalarPower = const for scale invariant spectrum
-    !The normalization is defined so that for adiabatic perturbations the gradient of the 3-Ricci
-    !scalar on co-moving hypersurfaces receives power
-    ! < |D_a R^{(3)}|^2 > = int dk/k 16 k^6/S^6 (1-3K/k^2)^2 ScalarPower(k)
-    !In other words ScalarPower is the power spectrum of the conserved curvature perturbation given by
-    !-chi = \Phi + 2/3*\Omega^{-1} \frac{H^{-1}\Phi' - \Psi}{1+w}
-    !(w=p/\rho), so < |\chi(x)|^2 > = \int dk/k ScalarPower(k).
-    !Near the end of inflation chi is equal to 3/2 Psi.
-    !Here nu^2 = (k^2 + curv)/|curv|
-
-    !This power spectrum is also used for isocurvature modes where
-    !< |\Delta(x)|^2 > = \int dk/k ScalarPower(k)
-    !For the isocurvture velocity mode ScalarPower is the power in the neutrino heat flux.
-
-    real(dl) :: VectorPowerOdd, k, lnrat 
-    integer :: ix
-    ! MagCAMB: adding the parameters for fitting the functions
-    real(dl) :: ratkd
-    real(dl) :: t !yun modify check
-    ! helical contribution
-    real(dl) :: nh
-
-        ratkd = (P%kDissip)/P%k_0_scalar
-        t = k/P%kDissip
-        nh=P%an_hel1(ix)
-        lnrat = log(k/P%k_0_scalar)
- 
-    if(magmode>0 .and. do_helical) then
-! this when using interpolation table
-        if(P%CorrType_hel == 0) then
-           !ScalarPowerHel = P%ScalarPowerAmp_hel(ix)*exp(lnrat*( P%an_hel1(ix)-1 ))
-           VectorPowerOdd = P%VectorPowerAmp_odd(ix)*exp(lnrat*( P%an_hel1(ix)-1 + lnrat*(P%n_run(ix)/2 + P%n_runrun(ix)/6*lnrat)))
-          ! write(*,*) "ScalarPowerHel = ", ScalarPowerHel !useless,check
-          ! if(ScalarPower<0) write(*,*) "Negative helical PowerScalar"!check
-!Vector Helical  
-        else if (P% CorrType_hel == 5) then !Vector Pi-Pi
-           VectorPowerOdd = P%ScalarPowerAmp_hel(ix)* (ratkd)*(2.d0*nh+6._dl)* &
-                             (IntVPPM(t,nh))
-           ! write(*,*) "VECTOR MAGNETIC, Only Compensated Modes.helical "  !check   
-        else
-             write(*,*) "Power Spectrum not set..."
-        end if
-    !if (ScalarPower < 0.d0) then
-    !    write(*,*) "Scalar Power < 0 "
-    !    stop
-    !end if
-    end if
-!write(*,*) "Scalar Power tot = ", ScalarPower
-    !         ScalarPower = ScalarPower * (1 + 0.1*cos( lnrat*30 ) )
-    end function VectorPowerOdd
-    
 
     function TensorPower(k,ix)
 
@@ -2552,11 +2162,11 @@ end function IntTPPM
            TensorPower = TensorPower + TensorPowerHel
         else if(P%CorrType_hel == 6) then  !
             TensorPowerHel = P%TensorPowerAmp_hel(ix)*(ratkd)**(2._dl*nh+6._dl)*&
-                            IntTPPH(t,nh)
+                            IntTPPH(t,n)
             TensorPower = TensorPower + TensorPowerHel
         else if(P%CorrType_hel == 7) then   !tensor compensated
             TensorPowerHel = P%TensorPowerAmp_hel(ix)*(ratkd)**(2._dl*nh+6._dl)*&
-                            IntTPPH(t,nh)
+                            IntTPPH(t,n)
             TensorPower = TensorPower + TensorPowerHel
         else
         !ERROR!!!
@@ -2569,51 +2179,6 @@ end function IntTPPM
     
     end function TensorPower
 
-!========= Helical Contribution Parity Odd =============
-function TensorPowerOdd(k,ix)
-    !TensorPower= const for scale invariant spectrum
-    !The normalization is defined so that
-    ! < h_{ij}(x) h^{ij}(x) > = \sum_nu nu /(nu^2-1) (nu^2-4)/nu^2 TensorPower(k)
-    !for a closed model
-    ! < h_{ij}(x) h^{ij}(x) > = int d nu /(nu^2+1) (nu^2+4)/nu^2 TensorPower(k)
-    !for an open model
-    !"ix" gives the index of the power spectrum to return
-    !Here nu^2 = (k^2 + 3*curv)/|curv|
-    real(dl) TensorPowerOdd,k
-    real(dl), parameter :: PiByTwo=3.14159265d0/2._dl
-    integer ix
-    real(dl) lnrat, k_dep
-        ! MagCAMB: adding the parameters for fitting the functions
-    real(dl) :: ratkd
-    real(dl) :: t, n
-    ! helical contribution
-    real(dl) :: nh    
-        ratkd = (P%kDissip)/P%k_0_tensor
-        t = k/P%kDissip
-        n= P%ant(ix)
-        nh=P%ant_hel1(ix)
-        lnrat = log(k/P%k_0_tensor)
-        !write(*,*) "t = ", t
-        !k_dep = exp(lnrat*(P%ant(ix)))
-        !k_dep = exp(lnrat*(P%ant(ix) + P%nt_run(ix)/2*lnrat)) !check   
-    if(magmode>0 .and. do_helical) then
-! this when using interpolation table
-        if(P%CorrType_hel == 0) then
-           TensorPowerOdd = P%TensorPowerAmp_odd(ix)*exp(lnrat*(P%ant_hel1(ix) ))
-        else if(P%CorrType_hel == 6) then  !tensor passive
-            TensorPowerOdd = P%TensorPowerAmp_odd(ix)*(ratkd)**(2._dl*nh+6._dl)*&
-                            IntTPPM(t,nh)
-        else if(P%CorrType_hel == 7) then   !tensor compensated
-            TensorPowerOdd = P%TensorPowerAmp_odd(ix)*(ratkd)**(2._dl*nh+6._dl)*&
-                            IntTPPM(t,nh)
-        else
-        !ERROR!!!
-        write(*,*) "Power Spectrum not set..."
-        stop
-        end if
-    end if
- end function TensorPowerOdd
-    
     !Get parameters describing parameterisation (for FITS file)
     !Does not support running extensions
     function Power_Descript(in, Scal, Tens, Keys, Vals)

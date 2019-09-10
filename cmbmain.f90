@@ -304,9 +304,7 @@
     end if
 
     if (CP%WantVectors .and. global_error_flag==0) then
-        !allocate(iCl_vector(CTransV%ls%l0,C_Temp:CT_Cross,CP%InitPower%nn))
-        allocate(iCl_vector(CTransV%ls%l0,C_Temp:CT_Cross2,CP%InitPower%nn)) !YUN
-        iCl_vector = 0
+        allocate(iCl_vector(CTransV%ls%l0,C_Temp:CT_Cross,CP%InitPower%nn))
         iCl_vector = 0
         call CalcVecCls(CTransV,GetInitPowerArrayVec)
         if (DebugMsgs .and. Feedbacklevel > 0) write (*,*) 'CalcVecCls'
@@ -314,8 +312,7 @@
 
 
     if (CP%WantTensors .and. global_error_flag==0) then
-        !allocate(iCl_Tensor(CTransT%ls%l0,CT_Temp:CT_Cross,CP%InitPower%nn))
-        allocate(iCl_Tensor(CTransT%ls%l0,CT_Temp:CT_Cross2,CP%InitPower%nn))!YUN
+        allocate(iCl_Tensor(CTransT%ls%l0,CT_Temp:CT_Cross,CP%InitPower%nn))
         iCl_tensor = 0
         call CalcTensCls(CTransT,GetInitPowerArrayTens)
         if (DebugMsgs .and. Feedbacklevel > 0) write (*,*) 'CalcTensCls'
@@ -2080,11 +2077,9 @@
 
     end subroutine DoRangeIntTensor
 
-    !subroutine GetInitPowerArrayVec(pows,ks, numks,pix)
-    subroutine GetInitPowerArrayVec(pows,powsodd,ks, numks,pix) !yun,check
+    subroutine GetInitPowerArrayVec(pows,ks, numks,pix)
     integer, intent(in) :: numks, pix
     real(dl) pows(numks), ks(numks)
-    real(dl) powsodd(numks)!yun,check
     integer i
 
     do i = 1, numks
@@ -2092,32 +2087,20 @@
         pows(i) =  ScalarPower(ks(i) ,pix)
         if (global_error_flag/=0) exit
     end do
-! new added odd helical yun check 
-    do i = 1, numks
-        powsodd(i) = VectorPowerOdd(ks(i) ,pix)
-        if (global_error_flag/=0) exit
-    end do
-    
+
     end subroutine GetInitPowerArrayVec
 
 
-    !subroutine GetInitPowerArrayTens(pows,ks, numks,pix)
-    subroutine GetInitPowerArrayTens(pows,powsodd,ks, numks,pix) !yun,check
+    subroutine GetInitPowerArrayTens(pows,ks, numks,pix)
     integer, intent(in) :: numks, pix
     real(dl) pows(numks), ks(numks)
-    real(dl) powsodd(numks)!yun,check
     integer i
 
     do i = 1, numks
         pows(i) =  TensorPower(ks(i) ,pix)
         if (global_error_flag/=0) exit
     end do
-! new added odd helical yun check 
-    do i = 1, numks
-        powsodd(i) = TensorPowerOdd(ks(i) ,pix)
-        if (global_error_flag/=0) exit
-    end do
-    
+
     end subroutine GetInitPowerArrayTens
 
 
@@ -2310,11 +2293,9 @@
     real(dl) apowert,  measure
     real(dl) ctnorm,dbletmp
     real(dl) pows(CTrans%q%npoints)
-    real(dl) powsodd(CTrans%q%npoints) !yun check
-    real(dl) apowertodd !yun ,check 
     real(dl)  ks(CTrans%q%npoints),measures(CTrans%q%npoints)
+
     !For tensors we want Integral dnu/nu (nu^2-3)/(nu^2-1) Delta_l_k^2 P(k) for CP%closed
-    !yun check 
 
     do in=1,CP%InitPower%nn
         do q_ix = 1, CTrans%q%npoints
@@ -2328,7 +2309,7 @@
             end if
         end do
 
-        call GetInitPowers(pows,powsodd,ks,CTrans%q%npoints,in)!yun,check 
+        call GetInitPowers(pows,ks,CTrans%q%npoints,in)
 
         !$OMP PARAllEl DO DEFAUlT(SHARED),SCHEDUlE(STATIC,4) &
         !$OMP & PRIVATE(j,q_ix,measure,apowert,ctnorm,dbletmp)
@@ -2337,20 +2318,13 @@
             if (.not.(CP%closed.and. nint(CTrans%q%points(q_ix)*CP%r)<=CTrans%ls%l(j))) then
                 !cut off at nu = l+1
                 apowert = pows(q_ix)
-                apowertodd = powsodd(q_ix)
                 measure = measures(q_ix)
 
                 iCl_tensor(j,CT_Temp:CT_B,in) = iCl_tensor(j,CT_Temp:CT_B,in) + &
                     apowert*CTrans%Delta_p_l_k(CT_Temp:CT_B,j,q_ix)**2*measure
 
                 iCl_tensor(j,CT_cross, in ) = iCl_tensor(j,CT_cross, in ) &
-                    +apowert*CTrans%Delta_p_l_k(CT_Temp,j,q_ix)*CTrans%Delta_p_l_k(CT_E,j,q_ix)*measure !TE 
-                    
-                    !CHECK ,C cross
-                iCl_tensor(j,CT_cross1, in ) = iCl_tensor(j,CT_cross1, in ) &
-                    +apowertodd*CTrans%Delta_p_l_k(CT_Temp,j,q_ix)*CTrans%Delta_p_l_k(CT_B,j,q_ix)*measure !yun check TB
-                iCl_tensor(j,CT_cross2, in ) = iCl_tensor(j,CT_cross2, in ) &
-                    +apowertodd*CTrans%Delta_p_l_k(CT_E,j,q_ix)*CTrans%Delta_p_l_k(CT_B,j,q_ix)*measure!yun check EB
+                    +apowert*CTrans%Delta_p_l_k(CT_Temp,j,q_ix)*CTrans%Delta_p_l_k(CT_E,j,q_ix)*measure
             end if
         end do
 
@@ -2359,17 +2333,9 @@
         iCl_tensor(j, CT_Temp, in) = iCl_tensor(j, CT_Temp, in)*dbletmp*ctnorm
         if (CTrans%ls%l(j)==1) dbletmp=0
         iCl_tensor(j, CT_E:CT_B, in) = iCl_tensor(j, CT_E:CT_B, in)*dbletmp
-        iCl_tensor(j, CT_Cross, in)  = iCl_tensor(j, CT_Cross, in)*dbletmp*sqrt(ctnorm) !TE
-        iCl_tensor(j, CT_Cross1, in)  = iCl_tensor(j, CT_Cross1, in)*dbletmp*sqrt(ctnorm) !YUN, TB
-        iCl_tensor(j, CT_Cross2, in)  = iCl_tensor(j, CT_Cross2, in)*dbletmp !YUN, EB
+        iCl_tensor(j, CT_Cross, in)  = iCl_tensor(j, CT_Cross, in)*dbletmp*sqrt(ctnorm)
     end do
     end do
-!AZ:
-open(unit=1, file="TENSOR1_CROSS1.dat", status = "unknown")
-do j=1,CTrans%ls%l0
-	write(1,*) j, iCl_tensor(j, CT_Cross1, 1)
-end do
-close(1)
 
     end subroutine CalcTensCls
 
@@ -2382,8 +2348,6 @@ close(1)
     real(dl) power,  measure
     real(dl) ctnorm,lfac,dbletmp
     real(dl) pows(CTrans%q%npoints)
-    real(dl) powsodd(CTrans%q%npoints) !yun check
-    real(dl) powerodd !yun ,check 
     real(dl)  ks(CTrans%q%npoints),measures(CTrans%q%npoints)
 
     do in=1,CP%InitPower%nn
@@ -2392,7 +2356,7 @@ close(1)
             measures(q_ix) = CTrans%q%dpoints(q_ix)/CTrans%q%points(q_ix)
         end do
 
-        call GetInitPowers(pows,powsodd,ks,CTrans%q%npoints,in) !yun,check
+        call GetInitPowers(pows,ks,CTrans%q%npoints,in)
 
         !$OMP PARAllEl DO DEFAUlT(SHARED),SCHEDUlE(STATIC,4) &
         !$OMP & PRIVATE(j,q_ix,measure,power,ctnorm,dbletmp,lfac)
@@ -2401,18 +2365,13 @@ close(1)
             if (.not.(CP%closed.and. nint(CTrans%q%points(q_ix)*CP%r)<=CTrans%ls%l(j))) then
                 !cut off at nu = l+1
                 power = pows(q_ix)
-                powerodd = powsodd(q_ix) !yun,check
                 measure = measures(q_ix)
 
                 iCl_vector(j,CT_Temp:CT_B,in) = iCl_vector(j,CT_Temp:CT_B,in) + &
                     power*CTrans%Delta_p_l_k(CT_Temp:CT_B,j,q_ix)**2*measure
 
                 iCl_vector(j,CT_cross, in ) = iCl_vector(j,CT_cross, in ) &
-                    +power*CTrans%Delta_p_l_k(CT_Temp,j,q_ix)*CTrans%Delta_p_l_k(CT_E,j,q_ix)*measure !check, TE
-                iCl_vector(j,CT_cross1, in ) = iCl_vector(j,CT_cross1, in ) &
-                    +powerodd*CTrans%Delta_p_l_k(CT_Temp,j,q_ix)*CTrans%Delta_p_l_k(CT_B,j,q_ix)*measure !YUN, TB
-                iCl_vector(j,CT_cross2, in ) = iCl_vector(j,CT_cross2, in ) &
-                    +powerodd*CTrans%Delta_p_l_k(CT_E,j,q_ix)*CTrans%Delta_p_l_k(CT_B,j,q_ix)*measure !YUN, BE
+                    +power*CTrans%Delta_p_l_k(CT_Temp,j,q_ix)*CTrans%Delta_p_l_k(CT_E,j,q_ix)*measure
             end if
         end do
 
@@ -2421,18 +2380,10 @@ close(1)
         iCl_vector(j, CT_Temp, in)   = iCl_vector(j, CT_Temp, in)*dbletmp*ctnorm
         lfac = (CTrans%ls%l(j) + 2)*(CTrans%ls%l(j) - 1)
         iCl_vector(j, CT_E:CT_B, in) = iCl_vector(j, CT_E:CT_B, in)*dbletmp*lfac
-        iCl_vector(j, CT_Cross, in)  = iCl_vector(j, CT_Cross, in)*dbletmp*sqrt(lfac*ctnorm) !TE
-        iCl_vector(j, CT_Cross1, in)  = iCl_vector(j, CT_Cross1, in)*dbletmp*sqrt(lfac*ctnorm) !YUN, TB
-        iCl_vector(j, CT_Cross2, in)  = iCl_vector(j, CT_Cross2, in)*dbletmp*lfac !YUN, EB
+        iCl_vector(j, CT_Cross, in)  = iCl_vector(j, CT_Cross, in)*dbletmp*sqrt(lfac*ctnorm)
     end do
     end do
 
-! AZ: test
-
-!do q_ix = 1, CTrans%q%npoints
-
-
-!end do
     end subroutine CalcVecCls
 
 
@@ -2469,13 +2420,13 @@ close(1)
         end if
 
         if (CP%WantVectors) then
-            do i = C_Temp, CT_Cross2!CT_Cross! YUN
+            do i = C_Temp, CT_cross
                 call InterpolateClArr(CTransV%ls,iCl_vector(1,i,in),Cl_vector(lmin, in, i),CTransV%ls%l0)
             end do
         end if
 
         if (CP%WantTensors) then
-            do i = CT_Temp, CT_Cross2!CT_Cross! !YUN
+            do i = CT_Temp, CT_Cross
                 call InterpolateClArr(CTransT%ls,iCl_tensor(1,i,in),Cl_tensor(lmin, in, i), CTransT%ls%l0)
             end do
         end if

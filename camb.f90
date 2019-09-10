@@ -241,8 +241,7 @@
     subroutine CAMB_GetCls(Cls, lmax, in, GC_conventions)
     integer, intent(IN) :: lmax, in
     logical, intent(IN) :: GC_conventions
-    !real, intent(OUT) :: Cls(2:lmax,1:4) 
-    real, intent(OUT) :: Cls(2:lmax,1:6) !YUN
+    real, intent(OUT) :: Cls(2:lmax,1:4)
     integer l
 
     Cls = 0
@@ -256,15 +255,12 @@
             endif
         end if
         if (CP%WantTensors .and. l <= CP%Max_l_tensor) then
-            !Cls(l,1:4) = Cls(l,1:4) + Cl_tensor(l, in,  CT_Temp:CT_Cross)
-            Cls(l,1:6) = Cls(l,1:6) + Cl_tensor(l, in,  CT_Temp:CT_Cross2)!YUN
+            Cls(l,1:4) = Cls(l,1:4) + Cl_tensor(l, in,  CT_Temp:CT_Cross)
         end if
     end do
     if (GC_conventions) then
-        Cls(:,2:3) = Cls(:,2:3)/2  !EE, BB
-        Cls(:,4)   = Cls(:,4)/sqrt(2.0) !TE 
-        Cls(:,5)   = Cls(:,5)/sqrt(2.0)!YUN, TB 
-        Cls(:,6)   = Cls(:,6)/2        !YUN, EB
+        Cls(:,2:3) = Cls(:,2:3)/2
+        Cls(:,4)   = Cls(:,4)/sqrt(2.0)
     end if
 
     end subroutine CAMB_GetCls

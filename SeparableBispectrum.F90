@@ -287,7 +287,7 @@
     integer, parameter :: lens_bispectrum_approx = first_order_lensed
 #ifdef FISHER
     Type(TBispectrum), pointer :: Bispectrum2
-    real(dl) Cl(4,lmin:CTrans%ls%l(CTrans%ls%l0)) !CHECK
+    real(dl) Cl(4,lmin:CTrans%ls%l(CTrans%ls%l0))
     real(dl)  a3j_00(0:CTrans%ls%l(CTrans%ls%l0)*2+1)
     integer lstart
     real(dl) Noise, NoiseP, bias
@@ -870,18 +870,15 @@
                 cl(2,i) = CL_Scalar(i,1,C_E)
                 cl(4,i) = CL_Scalar(i,1,C_Cross)
                 cl(3,i) = 0
-                cl(5,i) = 0!YUN
-                cl(6,i) = 0!YUN
             end if
             if (CP%WantTensors .and. i<= CP%Max_l_tensor .and. i>=2) then
-                !cl(:,i) = cl(:,i) + Cl_tensor(i,1,CT_Temp:CT_Cross)
-                cl(:,i) = cl(:,i) + Cl_tensor(i,1,CT_Temp:CT_Cross2)!YUN
+                cl(:,i) = cl(:,i) + Cl_tensor(i,1,CT_Temp:CT_Cross)
             end if
         end do
         if (.false.) then
             call OpenTxtFile('CAMBdefault_lensedCls.dat',3)
             do i=lmin,lmax
-                !Assume T,E,B,X ordering, CHECK
+                !Assume T,E,B,X ordering
                 read(3,*) j, cl(1:4,i)
                 if (j<lmin) read(3,*) j, cl(1:4,i)
                 cl(:,i)=cl(:,i)/(COBE_CMBTemp*1e6)**2
