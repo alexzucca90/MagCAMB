@@ -312,7 +312,7 @@ end function mag_psamp_hel
                write(*,*) "USING INTERPOLATION TABLE for non-helical P_tpp"
                CP%InitPower%ant(1) = 2._dl*(3 + magind)
                CP%InitPower%TensorPowerAmp(1) = mag_psamp(magind, magamp, 5) *&
-                                                (3._dl*Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2!yun
+                                                (6._dl*Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2!yun
                CP%InitPower%CorrType = 0
             else       
 !Use first fitting formula
@@ -320,7 +320,7 @@ end function mag_psamp_hel
                write(*,*) "USING FITTING FORMULAS for non-helical P_tpp"
                CP%InitPower%ant(1) = magind
                CP%InitPower%TensorPowerAmp(1) = mag_amplitude(magind, magamp)*psconst(5)*&
-                                                (3._dl*Rg*(lrat+(5._dl/(8._dl*Rv)-1)))**2
+                                                (6._dl*Rg*(lrat+(5._dl/(8._dl*Rv)-1)))**2
                CP%InitPower%CorrType = 6
             end if
 !tensor helical passive
@@ -328,9 +328,9 @@ end function mag_psamp_hel
                 if(helical_ind < -2.d0) then
                     CP%InitPower%CorrType_hel = 0
                     CP%InitPower%TensorPowerAmp_hel(1) = mag_psamp_hel(helical_ind, helical_amp,10)&
-                                                       *(3._dl*Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2 
+                                                       *(6._dl*Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2 
                     CP%InitPower%TensorPowerAmp_odd(1) = mag_psamp_hel(helical_ind, helical_amp,12)&
-                                                       *(3._dl*Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2 
+                                                       *(6._dl*Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2 
                                
                     CP%InitPower%ant_hel1(1) = 2.d0*(helical_ind +3.d0)
                     write(*,*) "Using interpolation TABLE for helical P_tpp"
@@ -338,9 +338,9 @@ end function mag_psamp_hel
                     write(*,*) "Using fitting functions for helical P_tpp" 
                     CP%InitPower%ant_hel1(1) = helical_ind
                     CP%InitPower%TensorPowerAmp_hel(1) = mag_amplitude_hel(helical_ind, helical_amp)*psconst(10)&
-                                                       *(3._dl*Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2
+                                                       *(6._dl*Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2
                     CP%InitPower%TensorPowerAmp_odd(1) = mag_amplitude_hel(helical_ind, helical_amp)*psconst(12)&
-                                                       *(3._dl*Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2
+                                                       *(6._dl*Rg*(lrat + (5._dl/(8._dl*Rv) - 1)))**2
                     CP%InitPower%CorrType_hel = 6 
                 end if
              end if
