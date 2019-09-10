@@ -35,3 +35,7 @@ The devel branch is a development version, which integrates CAMB and CAMB source
 
 CAMB_sources is the updated public `CAMB Sources <http://camb.info/sources/>`_ code.
 
+Helical
+=============================
+
+This version code contains parity odd correlation functions for Cl_EB and Cl_TB.
