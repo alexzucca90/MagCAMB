@@ -1446,18 +1446,32 @@ function IntVPPH(x,y)
  
  !    f(x) = p1*x^5 + p2*x^4 + p3*x^3 + p4*x^2 + p5*x + p6
 !Coefficients (with 95% confidence bounds):
-       real(dl) ::  hvp1 =       2.204 ! (1.633, 2.774)
-       real(dl) ::  hvp2 =      -1.566  !(-1.572, -1.56)
-       real(dl) ::  hvp3 =       1.347  !(1.347, 1.347)
-       real(dl) ::  hvp4 =  -9.115e-09  !(-4.086e-08, 2.263e-08)
-       real(dl) ::  hvp5 =   1.824e-11  !(-1.017e-12, 3.75e-11)
-       real(dl) ::  hvp6 =   2.628e-13  !(2.594e-13, 2.662e-13)
+      ! real(dl) ::  hvp1 =       2.204 ! (1.633, 2.774)
+       !real(dl) ::  hvp2 =      -1.566  !(-1.572, -1.56)
+       !real(dl) ::  hvp3 =       1.347  !(1.347, 1.347)
+       !real(dl) ::  hvp4 =  -9.115e-09  !(-4.086e-08, 2.263e-08)
+       !real(dl) ::  hvp5 =   1.824e-11  !(-1.017e-12, 3.75e-11)
+       !real(dl) ::  hvp6 =   2.628e-13  !(2.594e-13, 2.662e-13)
 
 !Goodness of fit:
  ! SSE: 8.458e-26
  ! R-square: 1
  ! Adjusted R-square: 1
  ! RMSE: 1.103e-14
+ !!!!T<0.004
+ ! f(x) = hvp5*x5 + hvp6*x4 + hvp7*x3+ hvp8*x3
+!Coefficients (with 95% confidence bounds):
+       real(dl) ::  hvp5 =      0.4913  !(0.4898, 0.4928)
+       real(dl) ::  hvp6 =       -1.54  !(-1.541, -1.54)
+       real(dl) ::  hvp7 =       0.253  !(-13.42, 13.92)
+       real(dl) ::  hvp8 =       1.094  !(-12.58, 14.76)
+
+!Goodness of fit:
+ ! SSE: 1.65e-15
+  !R-square: 1
+  !Adjusted R-square: 1
+  !RMSE: 4.058e-10
+ 
 
 !!!!T>0.004
   !   f(x) = hv2p1*x6 + hv2p2*x5 + hv2p3*x4 + hv2p4*x3 + hv2p5*x2 + 
@@ -1512,7 +1526,8 @@ function IntVPPH(x,y)
         end if
     else if ( y < -0.95 .and. y .GE. -1.1) then !-1.05
         if (x .le. 0.004) then
-           IntVPPH = hvp1*x5 + hvp2*x4 + hvp3*x3 + hvp4*x2 + hvp5*x + hvp6 
+           IntVPPH = hvp5*x5 + hvp6*x4 + hvp7*x3+ hvp8*x3
+           !IntVPPH = hvp1*x5 + hvp2*x4 + hvp3*x3 + hvp4*x2 + hvp5*x + hvp6 
            !write(*,*) "t, IntVPPH  = ", x, IntVPPH   !good                      
         else if ( x .GE. 0.004 .and. x .le. 0.5) then
            IntVPPH = hv2p1*x6 + hv2p2*x5 + hv2p3*x4 + hv2p4*x3 + hv2p5*x2 + &
