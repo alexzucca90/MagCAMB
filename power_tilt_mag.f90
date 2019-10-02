@@ -2037,9 +2037,9 @@ end function IntTPPH
     else if(P%CorrType==5) then  
         ScalarPower = P%ScalarPowerAmp(ix) * (ratkd)**(2._dl*n+6._dl)*&
                         IntVPP(t,n)        !psconst() included in mag.f90
-        write(*,*) " P%ScalarPowerAmp(ix), (ratkd)*(2.d0*n+6._dl), ratkd, n= ", P%ScalarPowerAmp(ix),&
-           (ratkd)**(2._dl*n+6._dl), ratkd, n!check                 
-        write(*,*) "Nonhelical ScalarPower,IntVPP =", ScalarPower,IntVPP(t,n)  !check 
+        !write(*,*) " P%ScalarPowerAmp(ix), (ratkd)*(2.d0*n+6._dl), ratkd, n= ", P%ScalarPowerAmp(ix),&
+         !  (ratkd)**(2._dl*n+6._dl), ratkd, n!check                 
+        !write(*,*) "Nonhelical ScalarPower,IntVPP =", ScalarPower,IntVPP(t,n)  !check 
         !write(*,*) "VECTOR MAGNETIC, Only Compensated Modes. "  !check             
         !if(ScalarPower<0) write(*,*) "Negative non-helical VectorPower at k = ", k  !check
     else
