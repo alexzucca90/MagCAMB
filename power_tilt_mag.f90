@@ -2410,7 +2410,7 @@ end function IntTPPM
             ScalarPower = ScalarPower + ScalarPowerHel
 !Vector Helical  
         else if (P% CorrType_hel == 5) then !Vector Pi-Pi
-            ScalarPowerHel = P%ScalarPowerAmp_hel(ix)* (ratkd)*(2.d0*nh+6._dl)* &
+            ScalarPowerHel = P%ScalarPowerAmp_hel(ix)* (ratkd)**(2.d0*nh+6._dl)* &
                              (IntVPPH(t,nh))
             ScalarPower = ScalarPower + ScalarPowerHel
            ! write(*,*) "VECTOR MAGNETIC, Only Compensated Modes.helical "  !check   
@@ -2467,7 +2467,7 @@ end function IntTPPM
           ! if(ScalarPower<0) write(*,*) "Negative helical PowerScalar"!check
 !Vector Helical  
         else if (P% CorrType_hel == 5) then !Vector Pi-Pi
-           VectorPowerOdd = P%ScalarPowerAmp_hel(ix)* (ratkd)*(2.d0*nh+6._dl)* &
+           VectorPowerOdd = P%ScalarPowerAmp_hel(ix)*(ratkd)**(2.d0*nh+6._dl)* &
                              (IntVPPM(t,nh))
            ! write(*,*) "VECTOR MAGNETIC, Only Compensated Modes.helical "  !check   
         else
