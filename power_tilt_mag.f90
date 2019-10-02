@@ -1516,7 +1516,7 @@ function IntVPPH(x,y)
         else if ( x .GE. 0.004 .and. x .le. 0.5) then
            IntVPPH = hv2p1*x6 + hv2p2*x5 + hv2p3*x4 + hv2p4*x3 + hv2p5*x2 + &
                      hv2p6*x + hv2p7
-           !write(*,*) "t, IntVPPH  = ", x, IntVPPH   !good        
+          ! write(*,*) "t, IntVPPH  = ", x, IntVPPH   !good        
         else !t>0.5
             write(*,*) "Fitting functions not computed for t>0.5"
             stop
@@ -1524,6 +1524,7 @@ function IntVPPH(x,y)
     else if (y==0) then
         if (x .le. 0.5) then
            IntVPPH =(x**(2._dl*y+6._dl))*(4/(9*x3) - 1/(4*x2) - 4/(15*x) + 1/6)
+           !write(*,*) "t, IntVPPH  = ", x, IntVPPH   !good  
         else !t>0.5
             write(*,*) "Fitting functions not computed for t>0.5"
             stop
@@ -2014,7 +2015,7 @@ end function IntTPPH
     if(P%CorrType==0) then
         lnrat = log(k/P%k_0_scalar)
         ScalarPower=P%ScalarPowerAmp(ix)*exp(lnrat*( P%an(ix)-1 + lnrat*(P%n_run(ix)/2 + P%n_runrun(ix)/6*lnrat))) !check
-         !write(*,*) "non-h ScalarPower = ", ScalarPower !useless,check
+        ! write(*,*) "non-h P%CorrType = ", P%CorrType !useless,check
        ! if(ScalarPower<0) write(*,*) "Negative non-helical PowerScalar"
     ! ---- SCALAR MAGNETIC -----
     !Compensated
@@ -2031,10 +2032,14 @@ end function IntTPPH
     else if(P%CorrType==4) then
         ScalarPower = P%ScalarPowerAmp(ix) * (ratkd)**(2._dl*n+6._dl)*&
                       (IntSPP(t,n))        !psconst() included in mag.f90
+      !write(*,*) "non-h CorrType = ", P%CorrType !useless,check
     ! VECTOR MAGNETIC, Only Compensated Modes.
     else if(P%CorrType==5) then  
         ScalarPower = P%ScalarPowerAmp(ix) * (ratkd)**(2._dl*n+6._dl)*&
                         IntVPP(t,n)        !psconst() included in mag.f90
+        write(*,*) " P%ScalarPowerAmp(ix), (ratkd)*(2.d0*n+6._dl), ratkd, n= ", P%ScalarPowerAmp(ix),&
+           (ratkd)**(2._dl*n+6._dl), ratkd, n!check                 
+        write(*,*) "Nonhelical ScalarPower,IntVPP =", ScalarPower,IntVPP(t,n)  !check 
         !write(*,*) "VECTOR MAGNETIC, Only Compensated Modes. "  !check             
         !if(ScalarPower<0) write(*,*) "Negative non-helical VectorPower at k = ", k  !check
     else
@@ -2075,9 +2080,15 @@ end function IntTPPH
             ScalarPower = ScalarPower + ScalarPowerHel
 !Vector Helical  
         else if (P% CorrType_hel == 5) then !Vector Pi-Pi
-            ScalarPowerHel = P%ScalarPowerAmp_hel(ix)* (ratkd)*(2.d0*nh+6._dl)* &
+            ScalarPowerHel = P%ScalarPowerAmp_hel(ix)* (ratkd)**(2._dl*nh+6._dl)* &
                              (IntVPPH(t,nh))
             ScalarPower = ScalarPower + ScalarPowerHel
+            !write(*,*) " ScalarPowerHel, IntVPPH=", ScalarPowerHel, IntVPPH(t,nh) !check 
+            !write(*,*) " ScalarPower=", ScalarPower !check 
+            !write(*,*) " P%ScalarPowerAmp_hel(ix), (ratkd)*(2.d0*nh+6._dl), rat, nh= ", P%ScalarPowerAmp_hel(ix),&
+            !(ratkd)**(2.d0*nh+6._dl),ratkd, nh !check 
+            !write(*,*) " P%ScalarPowerAmp_hel(ix), (ratkd)*(2.d0*nh+6._dl), rat, nh= ", P%ScalarPowerAmp_hel(ix),&
+            !(ratkd)*(2.d0*nh+6._dl),ratkd, nh !check 
            ! write(*,*) "VECTOR MAGNETIC, Only Compensated Modes.helical "  !check   
 
         else
